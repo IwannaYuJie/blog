@@ -5,11 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的个人博客 | Personal Blog</title>
     <meta name="description" content="分享技术、生活和思考的个人博客">
-    <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 主题初始化脚本 - 防止主题闪烁 -->
+    <script>
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('theme');
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+                
+                if (theme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) {
+                // 忽略localStorage错误
+            }
+        })();
+    </script>
+    
+    <!-- 关键CSS内联 - 首屏渲染必需 -->
+    <style>
+        /* 关键CSS内联 - 从critical.css复制 */
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;scroll-behavior:smooth;scroll-padding-top:70px;overflow-x:hidden;font-size:16px;line-height:1.5}body{overflow-x:hidden;min-height:100vh;-webkit-tap-highlight-color:transparent;text-rendering:optimizeSpeed;word-wrap:break-word;hyphens:auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:1rem;line-height:1.5;font-weight:400;color:#111827;background-color:#ffffff;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-display:swap}:root{--primary-600:#4f46e5;--primary-700:#4338ca;--secondary-600:#c026d3;--gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-600:#4b5563;--gray-900:#111827;--color-text-primary:#111827;--color-text-secondary:#4b5563;--color-bg-primary:#ffffff;--color-bg-secondary:#f9fafb;--color-border:#e5e7eb;--space-2:0.5rem;--space-4:1rem;--space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-16:4rem;--radius-lg:0.5rem;--radius-xl:0.75rem;--radius-full:9999px;--shadow-sm:0 1px 3px 0 rgba(0,0,0,0.1),0 1px 2px 0 rgba(0,0,0,0.06);--shadow-md:0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.05);--duration-200:200ms;--duration-300:300ms;--ease-out:cubic-bezier(0,0,0.2,1)}.page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#4f46e5,#c026d3);display:flex;justify-content:center;align-items:center;z-index:9999;transition:opacity 0.5s ease-out,visibility 0.5s ease-out}.page-loader.hidden{opacity:0;visibility:hidden}.loader-content{text-align:center;color:white}.loader-spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.3);border-top:3px solid white;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1rem}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}.loader-text{font-size:1rem;font-weight:500}.navbar{position:fixed;top:0;width:100%;z-index:1000;background:rgba(255,255,255,0.85);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid rgba(255,255,255,0.2);box-shadow:0 1px 20px rgba(0,0,0,0.05);transition:all 0.3s ease-out}.nav-container{max-width:1200px;margin:0 auto;padding:0 var(--space-5);display:flex;justify-content:space-between;align-items:center;height:70px}.nav-logo h2{background:linear-gradient(135deg,var(--primary-600),var(--secondary-600));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700;font-size:1.25rem;display:flex;align-items:center;gap:var(--space-2)}.nav-menu{display:flex;list-style:none;gap:var(--space-8);align-items:center}.nav-link{text-decoration:none;color:var(--color-text-secondary);font-weight:500;padding:var(--space-2) var(--space-4);border-radius:var(--radius-lg);transition:all var(--duration-200) var(--ease-out)}.nav-link:hover{color:var(--primary-600);transform:translateY(-1px)}.nav-link.active{color:var(--primary-600);background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(217,70,239,0.15))}.hero{min-height:100vh;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:flex;align-items:center;position:relative;overflow:hidden;padding:80px 0 var(--space-16)}.hero-container{max-width:1200px;margin:0 auto;padding:0 var(--space-5);display:flex;align-items:center;gap:var(--space-16);position:relative;z-index:2}.hero-content{flex:1;max-width:50%}.hero-title{font-size:3.75rem;font-weight:800;line-height:1.1;margin-bottom:var(--space-6);color:white}.hero-subtitle{font-size:1.25rem;line-height:1.6;color:rgba(255,255,255,0.9);margin-bottom:var(--space-8)}.hero-buttons{display:flex;gap:var(--space-4);flex-wrap:wrap}.btn{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-4) var(--space-6);border-radius:var(--radius-xl);font-weight:600;text-decoration:none;transition:all var(--duration-200) var(--ease-out);cursor:pointer;border:none;font-size:1rem}.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:white;box-shadow:var(--shadow-md)}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 20px 25px -5px rgba(0,0,0,0.2)}.btn-secondary{background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);backdrop-filter:blur(10px)}.btn-secondary:hover{background:rgba(255,255,255,0.2);transform:translateY(-2px)}.container{max-width:1200px;margin:0 auto;padding:0 20px}.nav-toggle{display:none;flex-direction:column;justify-content:center;align-items:center;width:44px;height:44px;cursor:pointer;border-radius:var(--radius-lg);background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2)}.bar{width:22px;height:2px;background:var(--color-text-primary);border-radius:var(--radius-full);transition:all 0.3s ease-out}.bar:not(:last-child){margin-bottom:4px}@media (max-width:768px){.nav-menu{position:fixed;top:70px;left:0;width:100%;height:calc(100vh - 70px);background:rgba(255,255,255,0.95);backdrop-filter:blur(25px);flex-direction:column;justify-content:flex-start;align-items:center;padding:var(--space-8) var(--space-6);gap:var(--space-6);transform:translateX(-100%);opacity:0;visibility:hidden;transition:all 0.3s ease-out}.nav-menu.active{transform:translateX(0);opacity:1;visibility:visible}.nav-toggle{display:flex}.hero-container{flex-direction:column;text-align:center;gap:var(--space-8)}.hero-content{max-width:100%}.hero-title{font-size:2.25rem}.hero-subtitle{font-size:1rem}.hero-buttons{flex-direction:column;width:100%}.hero-buttons .btn{width:100%;justify-content:center}}.fonts-loading body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}.fonts-loaded body{font-family:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}@media (prefers-reduced-motion:reduce){*{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}html{scroll-behavior:auto}}
+        /* 暗色主题基本变量 - 防止闪烁 */
+        [data-theme="dark"]{--gray-50:#0f0f0f;--gray-100:#1a1a1a;--gray-200:#262626;--gray-600:#a3a3a3;--gray-900:#f5f5f5;--color-text-primary:#f5f5f5;--color-text-secondary:#d4d4d4;--color-bg-primary:#0f0f0f;--color-bg-secondary:#1a1a1a;--color-border:#404040}
+        [data-theme="dark"] body{color:#f5f5f5;background-color:#0f0f0f}
+        [data-theme="dark"] .navbar{background:rgba(26,26,26,0.85)}
+        [data-theme="dark"] .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)}
+    </style>
+    
+    <!-- 预连接到外部资源 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="js/resource-loader.js" as="script">
+    <link rel="preload" href="js/font-loader.js" as="script">
+    <link rel="preload" href="js/micro-interactions.js" as="script">
+    <link rel="preload" href="js/main.js" as="script">
+    
+    <!-- 预加载关键字体 -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600&display=swap" as="style">
+    
+    <!-- 异步加载非关键CSS -->
+    <link rel="preload" href="css/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="css/styles.css"></noscript>
+    
+    <!-- 异步加载字体CSS -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700;800&display=swap"></noscript>
+    
+    <!-- 异步加载Font Awesome - 使用多个CDN确保可靠性 -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+    <!-- 主要CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <!-- 备用CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+    
+    <!-- 微交互样式 -->
+    <link rel="preload" href="css/micro-interactions.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="css/micro-interactions.css"></noscript>
+    
+    <!-- FontAwesome 加载检测和错误处理 -->
+    <script>
+        // 检测FontAwesome是否正确加载
+        function checkFontAwesome() {
+            const testElement = document.createElement('i');
+            testElement.className = 'fas fa-home';
+            testElement.style.position = 'absolute';
+            testElement.style.left = '-9999px';
+            testElement.style.fontSize = '16px';
+            document.body.appendChild(testElement);
+            
+            const computedStyle = window.getComputedStyle(testElement);
+            const fontFamily = computedStyle.getPropertyValue('font-family');
+            
+            document.body.removeChild(testElement);
+            
+            // 如果字体族包含FontAwesome相关字符串，说明加载成功
+            return fontFamily.toLowerCase().includes('font awesome') || 
+                   fontFamily.toLowerCase().includes('fontawesome');
+        }
+        
+        // 页面加载完成后检测
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (!checkFontAwesome()) {
+                    console.warn('FontAwesome 可能未正确加载，尝试使用备用方案');
+                    // 添加备用字体样式
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        .fas, .fab, .far, .fal, .fad {
+                            font-family: 'Font Awesome 6 Free', 'Font Awesome 6 Brands', 'Font Awesome 6 Pro' !important;
+                            font-weight: 900;
+                        }
+                        .fab {
+                            font-weight: 400;
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }, 1000);
+        });
+    </script>
 </head>
 <body>
+    <!-- 页面加载器 -->
+    <div class="page-loader" id="page-loader">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <div class="loader-text">正在加载...</div>
+        </div>
+    </div>
+    
+    <!-- 滚动进度条 -->
+    <div class="scroll-progress" id="scroll-progress"></div>
+    
     <!-- 导航栏 -->
     <nav class="navbar">
         <div class="nav-container">
@@ -42,28 +155,127 @@
     <main>
         <!-- 首页横幅 -->
         <section id="home" class="hero">
+            <!-- 动态背景装饰元素 -->
+            <div class="hero-bg-decorations">
+                <div class="hero-shape hero-shape-1"></div>
+                <div class="hero-shape hero-shape-2"></div>
+                <div class="hero-shape hero-shape-3"></div>
+                <div class="hero-shape hero-shape-4"></div>
+                <div class="hero-floating-element hero-float-1">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="hero-floating-element hero-float-2">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <div class="hero-floating-element hero-float-3">
+                    <i class="fas fa-rocket"></i>
+                </div>
+            </div>
+            
             <div class="hero-container">
                 <div class="hero-content">
-                    <h1 class="hero-title">欢迎来到我的博客 🎉</h1>
-                    <p class="hero-subtitle">分享技术见解、生活感悟和创意思考</p>
+                    <div class="hero-badge">
+                        <i class="fas fa-star"></i>
+                        <span>欢迎来到我的数字世界</span>
+                    </div>
+                    <h1 class="hero-title">
+                        <span class="hero-title-main">创造</span>
+                        <span class="hero-title-accent">·</span>
+                        <span class="hero-title-main">分享</span>
+                        <span class="hero-title-accent">·</span>
+                        <span class="hero-title-main">成长</span>
+                    </h1>
+                    <p class="hero-subtitle">在这里记录技术探索的足迹，分享生活中的感悟与思考，与你一起在知识的海洋中航行</p>
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">50+</span>
+                            <span class="hero-stat-label">技术文章</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">1000+</span>
+                            <span class="hero-stat-label">代码提交</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">5+</span>
+                            <span class="hero-stat-label">开源项目</span>
+                        </div>
+                    </div>
                     <div class="hero-buttons">
-                        <a href="#posts" class="btn btn-primary">阅读文章</a>
-                        <a href="#about" class="btn btn-secondary">了解更多</a>
+                        <a href="#posts" class="btn btn-primary hero-cta-primary">
+                            <span class="btn-text">探索文章</span>
+                            <i class="fas fa-arrow-right btn-icon"></i>
+                        </a>
+                        <a href="#about" class="btn btn-secondary hero-cta-secondary">
+                            <span class="btn-text">了解更多</span>
+                            <i class="fas fa-user btn-icon"></i>
+                        </a>
                     </div>
                 </div>
-                <div class="hero-image">
+                <div class="hero-visual">
                     <div class="hero-illustration">
-                        <i class="fas fa-laptop-code"></i>
+                        <div class="hero-code-window">
+                            <div class="code-window-header">
+                                <div class="code-window-dots">
+                                    <span class="dot dot-red"></span>
+                                    <span class="dot dot-yellow"></span>
+                                    <span class="dot dot-green"></span>
+                                </div>
+                                <div class="code-window-title">welcome.js</div>
+                            </div>
+                            <div class="code-window-content">
+                                <div class="code-line">
+                                    <span class="code-keyword">const</span>
+                                    <span class="code-variable">blog</span>
+                                    <span class="code-operator">=</span>
+                                    <span class="code-string">"amazing"</span>
+                                </div>
+                                <div class="code-line">
+                                    <span class="code-keyword">function</span>
+                                    <span class="code-function">explore</span>
+                                    <span class="code-bracket">()</span>
+                                    <span class="code-bracket">{</span>
+                                </div>
+                                <div class="code-line code-indent">
+                                    <span class="code-keyword">return</span>
+                                    <span class="code-string">"knowledge"</span>
+                                </div>
+                                <div class="code-line">
+                                    <span class="code-bracket">}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hero-tech-icons">
+                            <div class="tech-icon tech-icon-1">
+                                <i class="fab fa-js-square"></i>
+                            </div>
+                            <div class="tech-icon tech-icon-2">
+                                <i class="fab fa-react"></i>
+                            </div>
+                            <div class="tech-icon tech-icon-3">
+                                <i class="fab fa-node-js"></i>
+                            </div>
+                            <div class="tech-icon tech-icon-4">
+                                <i class="fab fa-python"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
+            
+            <!-- 滚动提示 -->
+            <div class="hero-scroll-indicator">
+                <div class="scroll-mouse">
+                    <div class="scroll-wheel"></div>
+                </div>
+                <span class="scroll-text">向下滚动探索更多</span>
             </div>
         </section>
 
         <!-- 文章列表 -->
-        <section id="posts" class="posts-section">
+        <section id="posts" class="posts-section content-section">
             <div class="container">
                 <div class="posts-header">
-                    <h2 class="section-title">最新文章</h2>
+                    <h2 class="section-title fade-in-up">最新文章</h2>
                     <button class="btn btn-primary" id="add-post-btn">
                         <i class="fas fa-plus"></i> 添加文章
                     </button>
@@ -72,39 +284,86 @@
                 <!-- 文章管理面板 -->
                 <div class="admin-panel" id="admin-panel" style="display: none;">
                     <div class="admin-form">
-                        <h3 id="form-title">添加新文章</h3>
+                        <div class="form-header">
+                            <h3 class="form-title" id="form-title">添加新文章</h3>
+                            <p class="form-description">填写文章信息，分享你的想法和见解</p>
+                        </div>
+                        
+                        <div class="form-progress">
+                            <div class="form-progress-bar" id="form-progress"></div>
+                        </div>
+                        
                         <form id="post-form">
-                            <div class="form-group">
-                                <label for="post-title">标题</label>
-                                <input type="text" id="post-title" name="title" required>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <input type="text" id="post-title" name="title" class="form-input" placeholder="请输入文章标题" required data-max-length="100">
+                                    <label for="post-title" class="form-label">文章标题</label>
+                                    <i class="form-icon fas fa-check"></i>
+                                    <div class="form-message"></div>
+                                    <div class="form-counter">
+                                        <span class="current">0</span>/<span class="max">100</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-field">
+                                    <select id="post-category" name="category" class="form-select" required>
+                                        <option value="">请选择分类</option>
+                                        <option value="tech">技术</option>
+                                        <option value="life">生活</option>
+                                        <option value="thoughts">思考</option>
+                                    </select>
+                                    <label for="post-category" class="form-label">文章分类</label>
+                                    <i class="form-icon fas fa-check"></i>
+                                    <div class="form-message"></div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="post-category">分类</label>
-                                <select id="post-category" name="category" required>
-                                    <option value="tech">技术</option>
-                                    <option value="life">生活</option>
-                                    <option value="thoughts">思考</option>
-                                </select>
+                            
+                            <div class="form-field">
+                                <textarea id="post-excerpt" name="excerpt" class="form-textarea" placeholder="请输入文章摘要" rows="3" required data-max-length="200"></textarea>
+                                <label for="post-excerpt" class="form-label">文章摘要</label>
+                                <i class="form-icon fas fa-check"></i>
+                                <div class="form-message"></div>
+                                <div class="form-counter">
+                                    <span class="current">0</span>/<span class="max">200</span>
+                                </div>
+                                <div class="form-tooltip" data-tooltip="简短描述文章主要内容，吸引读者阅读">?</div>
                             </div>
-                            <div class="form-group">
-                                <label for="post-excerpt">摘要</label>
-                                <textarea id="post-excerpt" name="excerpt" rows="3" required></textarea>
+                            
+                            <div class="form-field">
+                                <textarea id="post-content" name="content" class="form-textarea" placeholder="请输入文章内容" rows="8" required data-max-length="5000"></textarea>
+                                <label for="post-content" class="form-label">文章内容</label>
+                                <i class="form-icon fas fa-check"></i>
+                                <div class="form-message"></div>
+                                <div class="form-counter">
+                                    <span class="current">0</span>/<span class="max">5000</span>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="post-content">内容</label>
-                                <textarea id="post-content" name="content" rows="8" required></textarea>
+                            
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <input type="text" id="post-tags" name="tags" class="form-input" placeholder="例如: JavaScript, React, 前端">
+                                    <label for="post-tags" class="form-label">文章标签</label>
+                                    <i class="form-icon fas fa-check"></i>
+                                    <div class="form-message"></div>
+                                    <div class="form-tooltip" data-tooltip="用逗号分隔多个标签，有助于文章分类">?</div>
+                                </div>
+                                
+                                <div class="form-field">
+                                    <input type="number" id="post-read-time" name="readTime" class="form-input" min="1" max="60" value="5" required>
+                                    <label for="post-read-time" class="form-label">阅读时间 (分钟)</label>
+                                    <i class="form-icon fas fa-check"></i>
+                                    <div class="form-message"></div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="post-tags">标签 (用逗号分隔)</label>
-                                <input type="text" id="post-tags" name="tags" placeholder="例如: JavaScript, React, 前端">
-                            </div>
-                            <div class="form-group">
-                                <label for="post-read-time">预计阅读时间 (分钟)</label>
-                                <input type="number" id="post-read-time" name="readTime" min="1" max="60" value="5" required>
-                            </div>
+                            
                             <div class="form-actions">
-                                <button type="submit" class="btn btn-primary" id="submit-btn">
-                                    <i class="fas fa-save"></i> 保存文章
+                                <button type="submit" class="btn btn-primary form-submit" id="submit-btn">
+                                    <span class="btn-text">
+                                        <i class="fas fa-save"></i>
+                                        保存文章
+                                    </span>
+                                    <div class="btn-spinner"></div>
+                                    <i class="btn-success-icon fas fa-check"></i>
                                 </button>
                                 <button type="button" class="btn btn-secondary" id="cancel-btn">
                                     <i class="fas fa-times"></i> 取消
@@ -114,7 +373,7 @@
                     </div>
                 </div>
                 
-                <div class="posts-filter">
+                <div class="posts-filter fade-in-up animate-delay-200">
                     <button class="filter-btn active" data-category="all">全部</button>
                     <button class="filter-btn" data-category="tech">技术</button>
                     <button class="filter-btn" data-category="life">生活</button>
@@ -134,10 +393,10 @@
         </section>
 
         <!-- 关于我 -->
-        <section id="about" class="about-section">
+        <section id="about" class="about-section content-section">
             <div class="container">
                 <div class="about-content">
-                    <div class="about-text">
+                    <div class="about-text fade-in-left">
                         <h2 class="section-title">关于我</h2>
                         <p>你好！我是一个热爱技术和生活的博主。在这里，我分享我的学习心得、项目经验和生活感悟。</p>
                         <p>希望我的文章能够对你有所帮助，也欢迎与我交流讨论！</p>
@@ -148,7 +407,7 @@
                             <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
                         </div>
                     </div>
-                    <div class="about-image">
+                    <div class="about-image fade-in-right animate-delay-300">
                         <div class="avatar">
                             <i class="fas fa-user"></i>
                         </div>
@@ -158,11 +417,11 @@
         </section>
 
         <!-- 联系我 -->
-        <section id="contact" class="contact-section">
+        <section id="contact" class="contact-section content-section">
             <div class="container">
-                <h2 class="section-title">联系我</h2>
+                <h2 class="section-title fade-in-up">联系我</h2>
                 <div class="contact-content">
-                    <div class="contact-info">
+                    <div class="contact-info fade-in-left">
                         <div class="contact-item">
                             <i class="fas fa-envelope"></i>
                             <div>
@@ -178,17 +437,46 @@
                             </div>
                         </div>
                     </div>
-                    <form class="contact-form" id="contact-form">
-                        <div class="form-group">
-                            <input type="text" id="name" name="name" placeholder="您的姓名" required>
+                    <form class="contact-form fade-in-right animate-delay-300" id="contact-form">
+                        <div class="form-header">
+                            <h3 class="form-title">联系我</h3>
+                            <p class="form-description">有任何问题或建议，欢迎与我交流</p>
                         </div>
-                        <div class="form-group">
-                            <input type="email" id="email" name="email" placeholder="您的邮箱" required>
+                        
+                        <div class="form-field">
+                            <input type="text" id="name" name="name" class="form-input" placeholder="请输入您的姓名" required>
+                            <label for="name" class="form-label">您的姓名</label>
+                            <i class="form-icon fas fa-check"></i>
+                            <div class="form-message"></div>
                         </div>
-                        <div class="form-group">
-                            <textarea id="message" name="message" placeholder="您的留言" rows="5" required></textarea>
+                        
+                        <div class="form-field">
+                            <input type="email" id="email" name="email" class="form-input" placeholder="请输入您的邮箱" required>
+                            <label for="email" class="form-label">您的邮箱</label>
+                            <i class="form-icon fas fa-check"></i>
+                            <div class="form-message"></div>
                         </div>
-                        <button type="submit" class="btn btn-primary">发送消息</button>
+                        
+                        <div class="form-field">
+                            <textarea id="message" name="message" class="form-textarea" placeholder="请输入您的留言" rows="5" required data-max-length="500"></textarea>
+                            <label for="message" class="form-label">您的留言</label>
+                            <i class="form-icon fas fa-check"></i>
+                            <div class="form-message"></div>
+                            <div class="form-counter">
+                                <span class="current">0</span>/<span class="max">500</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary form-submit">
+                                <span class="btn-text">
+                                    <i class="fas fa-paper-plane"></i>
+                                    发送消息
+                                </span>
+                                <div class="btn-spinner"></div>
+                                <i class="btn-success-icon fas fa-check"></i>
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -196,7 +484,7 @@
     </main>
 
     <!-- 页脚 -->
-    <footer class="footer">
+    <footer class="footer fade-in-up">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
@@ -227,10 +515,58 @@
         </div>
     </footer>
 
+    <!-- 主题切换按钮 -->
+    <button class="theme-toggle" id="theme-toggle" aria-label="切换主题" title="切换暗色/亮色主题">
+        <i class="theme-icon sun fas fa-sun"></i>
+        <i class="theme-icon moon fas fa-moon"></i>
+    </button>
+
     <!-- 返回顶部按钮 -->
     <button class="back-to-top" id="back-to-top">
         <i class="fas fa-arrow-up"></i>
     </button>
+
+    <!-- 网络状态指示器 -->
+    <div class="network-status" id="network-status">
+        <div class="network-banner" id="network-banner">
+            <div class="network-banner-content">
+                <i class="network-icon fas fa-wifi-slash"></i>
+                <span class="network-text">网络连接已断开，请检查您的网络设置</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 离线模式提示 -->
+    <div class="offline-overlay" id="offline-overlay">
+        <div class="offline-modal">
+            <div class="offline-icon">
+                <i class="fas fa-cloud-slash"></i>
+            </div>
+            <h3 class="offline-title">网络连接中断</h3>
+            <p class="offline-message">
+                看起来您的网络连接出现了问题。请检查网络设置后重试，或者稍后再试。
+            </p>
+            <div class="error-actions">
+                <button class="retry-btn" id="retry-connection-btn">
+                    <span class="btn-text">
+                        <i class="fas fa-redo"></i>
+                        重试连接
+                    </span>
+                    <div class="retry-spinner"></div>
+                </button>
+                <button class="btn btn-secondary" id="close-offline-modal">
+                    <i class="fas fa-times"></i>
+                    稍后重试
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 自动重连指示器 -->
+    <div class="reconnect-indicator" id="reconnect-indicator">
+        <div class="reconnect-spinner"></div>
+        <span class="reconnect-text">正在尝试重新连接...</span>
+    </div>
 
     <!-- 删除确认模态框 -->
     <div class="modal" id="delete-modal">
@@ -259,10 +595,68 @@
     <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics-compat.js"></script>
     
+    <!-- 资源加载优化 - 优先加载 -->
+    <script src="js/resource-loader.js"></script>
+    
+    <!-- 图片优化 -->
+    <script src="js/image-optimizer.js"></script>
+    
+    <!-- CSS优化 -->
+    <script src="js/css-optimizer.js"></script>
+    
+    <!-- 性能监控 -->
+    <script src="js/performance-monitor.js"></script>
+    
     <!-- Firebase配置 -->
     <script src="js/firebase-config.js"></script>
     
+    <!-- 字体加载优化 -->
+    <script src="js/font-loader.js"></script>
+    
+    <!-- 加载状态和错误处理 -->
+    <script src="js/loading-error-handler.js"></script>
+    
     <!-- JavaScript -->
     <script src="js/main.js"></script>
+</body>
+</html>  
+                  </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 我的博客. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 主题切换按钮 -->
+    <button class="theme-toggle" id="theme-toggle" aria-label="切换主题" title="切换主题">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- 返回顶部按钮 -->
+    <button class="back-to-top" id="back-to-top" aria-label="返回顶部" title="返回顶部">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- 删除确认模态框 -->
+    <div class="modal" id="delete-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>确认删除</h3>
+                <button class="modal-close" id="delete-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>确定要删除这篇文章吗？此操作无法撤销。</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-delete-btn">取消</button>
+                <button class="btn btn-danger" id="confirm-delete-btn">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 微交互脚本 -->
+    <script src="js/micro-interactions.js"></script>
 </body>
 </html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>表单测试 - 现代化表单设计</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <!-- 字体预加载 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, var(--primary-50) 0%, var(--secondary-50) 100%);
+            min-height: 100vh;
+            padding: var(--space-8) var(--space-4);
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: var(--space-12);
+        }
+        
+        .test-title {
+            font-size: var(--text-4xl);
+            font-weight: var(--font-bold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-4);
+        }
+        
+        .test-description {
+            font-size: var(--text-lg);
+            color: var(--color-text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: var(--leading-relaxed);
+        }
+        
+        .forms-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-8);
+            margin-bottom: var(--space-12);
+        }
+        
+        @media (max-width: 768px) {
+            .forms-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-demo {
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--color-border);
+        }
+        
+        .demo-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-semibold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-6);
+            text-align: center;
+        }
+        
+        .features-list {
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-top: var(--space-8);
+        }
+        
+        .features-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .features-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .features-list li {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--color-text-secondary);
+        }
+        
+        .features-list li i {
+            color: var(--success-500);
+            width: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1 class="test-title">现代化表单设计测试</h1>
+            <p class="test-description">
+                这里展示了优化后的表单设计，包括浮动标签、实时验证、加载状态和成功反馈动画等现代化功能。
+            </p>
+        </div>
+        
+        <div class="forms-grid">
+            <!-- 联系表单演示 -->
+            <div class="form-demo">
+                <h2 class="demo-title">
+                    <i class="fas fa-envelope"></i>
+                    联系表单
+                </h2>
+                
+                <form id="contact-form-demo">
+                    <div class="form-field">
+                        <input type="text" id="demo-name" name="name" class="form-input" placeholder="请输入您的姓名" required>
+                        <label for="demo-name" class="form-label">您的姓名</label>
+                        <i class="form-icon fas fa-check"></i>
+                        <div class="form-message"></div>
+                    </div>
+                    
+                    <div class="form-field">
+                        <input type="email" id="demo-email" name="email" class="form-input" placeholder="请输入您的邮箱" required>
+                        <label for="demo-email" class="form-label">您的邮箱</label>
+                        <i class="form-icon fas fa-check"></i>
+                        <div class="form-message"></div>
+                    </div>
+                    
+                    <div class="form-field">
+                        <textarea id="demo-message" name="message" class="form-textarea" placeholder="请输入您的留言" rows="4" required></textarea>
+                        <label for="demo-message" class="form-label">您的留言</label>
+                        <i class="form-icon fas fa-check"></i>
+                        <div class="form-message"></div>
+                        <div class="form-counter">
+                            <span class="current">0</span>/<span class="max">500</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary form-submit">
+                            <span class="btn-text">
+                                <i class="fas fa-paper-plane"></i>
+                                发送消息
+                            </span>
+                            <div class="btn-spinner"></div>
+                            <i class="btn-success-icon fas fa-check"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- 文章表单演示 -->
+            <div class="form-demo">
+                <h2 class="demo-title">
+                    <i class="fas fa-edit"></i>
+                    文章表单
+                </h2>
+                
+                <div class="form-progress">
+                    <div class="form-progress-bar" id="demo-progress"></div>
+                </div>
+                
+                <form id="post-form-demo">
+                    <div class="form-row">
+                        <div class="form-field">
+                            <input type="text" id="demo-title" name="title" class="form-input" placeholder="请输入文章标题" required>
+                            <label for="demo-title" class="form-label">文章标题</label>
+                            <i class="form-icon fas fa-check"></i>
+                            <div class="form-message"></div>
+                            <div class="form-counter">
+                                <span class="current">0</span>/<span class="max">100</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-field">
+                            <select id="demo-category" name="category" class="form-select" required>
+                                <option value="">请选择分类</option>
+                                <option value="tech">技术</option>
+                                <option value="life">生活</option>
+                                <option value="thoughts">思考</option>
+                            </select>
+                            <label for="demo-category" class="form-label">文章分类</label>
+                            <i class="form-icon fas fa-check"></i>
+                            <div class="form-message"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-field">
+                        <textarea id="demo-excerpt" name="excerpt" class="form-textarea" placeholder="请输入文章摘要" rows="3" required></textarea>
+                        <label for="demo-excerpt" class="form-label">文章摘要</label>
+                        <i class="form-icon fas fa-check"></i>
+                        <div class="form-message"></div>
+                        <div class="form-counter">
+                            <span class="current">0</span>/<span class="max">200</span>
+                        </div>
+                        <div class="form-tooltip" data-tooltip="简短描述文章主要内容，吸引读者阅读">?</div>
+                    </div>
+                    
+                    <div class="form-field">
+                        <input type="text" id="demo-tags" name="tags" class="form-input" placeholder="例如: JavaScript, React, 前端">
+                        <label for="demo-tags" class="form-label">文章标签</label>
+                        <i class="form-icon fas fa-check"></i>
+                        <div class="form-message"></div>
+                        <div class="form-tooltip" data-tooltip="用逗号分隔多个标签">?</div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary form-submit">
+                            <span class="btn-text">
+                                <i class="fas fa-save"></i>
+                                保存文章
+                            </span>
+                            <div class="btn-spinner"></div>
+                            <i class="btn-success-icon fas fa-check"></i>
+                        </button>
+                        <button type="button" class="btn btn-secondary">
+                            <i class="fas fa-times"></i>
+                            取消
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 功能特性说明 -->
+        <div class="features-list">
+            <h3 class="features-title">
+                <i class="fas fa-star"></i>
+                实现的功能特性
+            </h3>
+            <ul>
+                <li><i class="fas fa-check"></i> 浮动标签动画效果</li>
+                <li><i class="fas fa-check"></i> 输入框聚焦状态动画</li>
+                <li><i class="fas fa-check"></i> 实时表单验证</li>
+                <li><i class="fas fa-check"></i> 友好的错误提示样式</li>
+                <li><i class="fas fa-check"></i> 成功状态视觉反馈</li>
+                <li><i class="fas fa-check"></i> 表单提交加载动画</li>
+                <li><i class="fas fa-check"></i> 成功提交反馈动画</li>
+                <li><i class="fas fa-check"></i> 字符计数器</li>
+                <li><i class="fas fa-check"></i> 表单进度指示器</li>
+                <li><i class="fas fa-check"></i> 工具提示功能</li>
+                <li><i class="fas fa-check"></i> 响应式设计</li>
+                <li><i class="fas fa-check"></i> 暗色主题支持</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // 简化版表单增强器，专门用于演示
+        class DemoFormEnhancer {
+            constructor(formSelector) {
+                this.form = document.querySelector(formSelector);
+                this.validator = {
+                    required: (value) => value.trim() !== '',
+                    email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+                    maxLength: (value, max) => value.length <= max
+                };
+                
+                if (this.form) {
+                    this.init();
+                }
+            }
+            
+            init() {
+                this.setupFields();
+                this.setupSubmit();
+            }
+            
+            setupFields() {
+                const fields = this.form.querySelectorAll('.form-field');
+                
+                fields.forEach(field => {
+                    const input = field.querySelector('.form-input, .form-textarea, .form-select');
+                    const counter = field.querySelector('.form-counter');
+                    
+                    if (input) {
+                        input.addEventListener('input', () => {
+                            this.validateField(field);
+                            this.updateCounter(field);
+                            this.updateProgress();
+                        });
+                        
+                        input.addEventListener('blur', () => {
+                            this.validateField(field);
+                        });
+                        
+                        input.addEventListener('focus', () => {
+                            field.classList.remove('error');
+                        });
+                    }
+                });
+            }
+            
+            validateField(field) {
+                const input = field.querySelector('.form-input, .form-textarea, .form-select');
+                const message = field.querySelector('.form-message');
+                const value = input.value.trim();
+                
+                field.classList.remove('success', 'error');
+                
+                if (input.required && !value) {
+                    if (input !== document.activeElement) {
+                        field.classList.add('error');
+                        message.textContent = '这个字段是必填的';
+                    }
+                    return false;
+                }
+                
+                if (input.type === 'email' && value && !this.validator.email(value)) {
+                    field.classList.add('error');
+                    message.textContent = '请输入有效的邮箱地址';
+                    return false;
+                }
+                
+                if (value) {
+                    field.classList.add('success');
+                    message.textContent = '输入正确';
+                    return true;
+                }
+                
+                return true;
+            }
+            
+            updateCounter(field) {
+                const input = field.querySelector('.form-input, .form-textarea, .form-select');
+                const counter = field.querySelector('.form-counter');
+                
+                if (!counter) return;
+                
+                const current = counter.querySelector('.current');
+                const max = counter.querySelector('.max');
+                
+                if (current && max) {
+                    const currentLength = input.value.length;
+                    const maxLength = parseInt(max.textContent);
+                    
+                    current.textContent = currentLength;
+                    
+                    counter.classList.remove('warning', 'error');
+                    
+                    if (currentLength > maxLength * 0.8) {
+                        counter.classList.add('warning');
+                    }
+                    
+                    if (currentLength > maxLength) {
+                        counter.classList.add('error');
+                    }
+                }
+            }
+            
+            updateProgress() {
+                const progressBar = this.form.querySelector('.form-progress-bar');
+                if (!progressBar) return;
+                
+                const fields = this.form.querySelectorAll('.form-field');
+                const validFields = Array.from(fields).filter(field => {
+                    const input = field.querySelector('.form-input, .form-textarea, .form-select');
+                    return input && input.value.trim() !== '';
+                }).length;
+                
+                const progress = fields.length > 0 ? (validFields / fields.length) * 100 : 0;
+                progressBar.style.width = `${progress}%`;
+            }
+            
+            setupSubmit() {
+                this.form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const submitBtn = this.form.querySelector('.form-submit');
+                    
+                    // 设置加载状态
+                    submitBtn.classList.add('loading');
+                    submitBtn.disabled = true;
+                    
+                    // 模拟提交延迟
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    // 设置成功状态
+                    submitBtn.classList.remove('loading');
+                    submitBtn.classList.add('success');
+                    
+                    // 显示成功消息
+                    this.showMessage('提交成功！', 'success');
+                    
+                    // 重置表单
+                    setTimeout(() => {
+                        this.form.reset();
+                        submitBtn.classList.remove('success');
+                        submitBtn.disabled = false;
+                        
+                        // 清除所有字段状态
+                        const fields = this.form.querySelectorAll('.form-field');
+                        fields.forEach(field => {
+                            field.classList.remove('success', 'error');
+                            const message = field.querySelector('.form-message');
+                            if (message) message.textContent = '';
+                        });
+                        
+                        this.updateProgress();
+                    }, 2000);
+                });
+            }
+            
+            showMessage(text, type) {
+                const message = document.createElement('div');
+                message.className = `form-notification ${type}`;
+                message.innerHTML = `
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    <span>${text}</span>
+                `;
+                
+                message.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${type === 'success' ? 'var(--success-500)' : 'var(--error-500)'};
+                    color: white;
+                    padding: 16px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    z-index: 10000;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-weight: 500;
+                    animation: slideInRight 0.3s ease-out;
+                `;
+                
+                document.body.appendChild(message);
+                
+                setTimeout(() => {
+                    message.style.animation = 'slideOutRight 0.3s ease-out';
+                    setTimeout(() => {
+                        document.body.removeChild(message);
+                    }, 300);
+                }, 3000);
+            }
+        }
+        
+        // 添加动画样式
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // 初始化表单
+        document.addEventListener('DOMContentLoaded', () => {
+            new DemoFormEnhancer('#contact-form-demo');
+            new DemoFormEnhancer('#post-form-demo');
+            
+            // 设置字符限制
+            const limits = {
+                'demo-name': 50,
+                'demo-title': 100,
+                'demo-excerpt': 200,
+                'demo-message': 500
+            };
+            
+            Object.entries(limits).forEach(([id, limit]) => {
+                const input = document.getElementById(id);
+                if (input) {
+                    const counter = input.closest('.form-field').querySelector('.form-counter .max');
+                    if (counter) counter.textContent = limit;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

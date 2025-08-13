@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>暗色主题测试</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script>
+        // 防止主题闪烁
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('theme');
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+                
+                if (theme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) {
+                // 忽略localStorage错误
+            }
+        })();
+    </script>
+    <style>
+        body {
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            transition: all 0.3s ease;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--color-border, #e5e7eb);
+            background: var(--color-bg-secondary, #f9fafb);
+        }
+        .test-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            margin: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #c026d3);
+            color: white;
+        }
+        .btn-secondary {
+            background: var(--color-bg-tertiary, #f3f4f6);
+            color: var(--color-text-primary, #111827);
+            border: 1px solid var(--color-border, #e5e7eb);
+        }
+        .test-card {
+            background: var(--color-bg-primary, white);
+            border: 1px solid var(--color-border, #e5e7eb);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .test-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .theme-toggle-test {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle-test:hover {
+            transform: scale(1.1);
+        }
+        .theme-icon {
+            position: absolute;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            color: var(--color-text-primary, #111827);
+        }
+        .theme-icon.sun {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+        .theme-icon.moon {
+            opacity: 0;
+            transform: rotate(180deg) scale(0.5);
+        }
+        [data-theme="dark"] .theme-icon.sun {
+            opacity: 0;
+            transform: rotate(-180deg) scale(0.5);
+        }
+        [data-theme="dark"] .theme-icon.moon {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+        [data-theme="dark"] .theme-toggle-test {
+            background: rgba(26, 26, 26, 0.9);
+            border-color: rgba(115, 115, 115, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>暗色主题测试页面</h1>
+        <p>这个页面用来测试暗色主题的各种组件效果。点击右上角的按钮切换主题。</p>
+        
+        <div class="test-section">
+            <h2>按钮测试</h2>
+            <button class="test-button btn-primary">
+                <i class="fas fa-star"></i>
+                主要按钮
+            </button>
+            <button class="test-button btn-secondary">
+                <i class="fas fa-heart"></i>
+                次要按钮
+            </button>
+        </div>
+        
+        <div class="test-section">
+            <h2>卡片测试</h2>
+            <div class="test-card">
+                <h3>测试卡片标题</h3>
+                <p>这是一个测试卡片的内容。在暗色主题下，卡片应该有合适的背景色和边框。</p>
+                <div style="margin-top: 12px;">
+                    <span style="background: linear-gradient(135deg, #4f46e5, #c026d3); color: white; padding: 4px 12px; border-radius: 16px; font-size: 14px;">
+                        <i class="fas fa-tag"></i> 测试标签
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>文本测试</h2>
+            <h3>这是三级标题</h3>
+            <p>这是正文内容。在暗色主题下，文本应该有足够的对比度以确保可读性。</p>
+            <p style="color: var(--color-text-secondary, #6b7280);">这是次要文本颜色。</p>
+            <p style="color: var(--color-text-tertiary, #9ca3af);">这是第三级文本颜色。</p>
+        </div>
+        
+        <div class="test-section">
+            <h2>图标测试</h2>
+            <div style="display: flex; gap: 16px; font-size: 24px;">
+                <i class="fas fa-sun" style="color: var(--primary-500, #6366f1);"></i>
+                <i class="fas fa-moon" style="color: var(--secondary-500, #d946ef);"></i>
+                <i class="fas fa-star" style="color: var(--warning-500, #f59e0b);"></i>
+                <i class="fas fa-heart" style="color: var(--error-500, #ef4444);"></i>
+                <i class="fas fa-check" style="color: var(--success-500, #22c55e);"></i>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主题切换按钮 -->
+    <button class="theme-toggle-test" id="theme-toggle" aria-label="切换主题">
+        <i class="theme-icon sun fas fa-sun"></i>
+        <i class="theme-icon moon fas fa-moon"></i>
+    </button>
+    
+    <script>
+        // 简化的主题切换功能
+        class SimpleThemeManager {
+            constructor() {
+                this.currentTheme = 'light';
+                this.themeToggle = document.getElementById('theme-toggle');
+                this.init();
+            }
+            
+            init() {
+                this.loadSavedTheme();
+                this.setupEventListeners();
+            }
+            
+            loadSavedTheme() {
+                try {
+                    const savedTheme = localStorage.getItem('theme');
+                    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    
+                    if (savedTheme) {
+                        this.currentTheme = savedTheme;
+                    } else if (systemPrefersDark) {
+                        this.currentTheme = 'dark';
+                    } else {
+                        this.currentTheme = 'light';
+                    }
+                    
+                    this.applyTheme(this.currentTheme);
+                } catch (error) {
+                    console.warn('加载主题偏好失败:', error);
+                    this.currentTheme = 'light';
+                    this.applyTheme('light');
+                }
+            }
+            
+            setupEventListeners() {
+                if (this.themeToggle) {
+                    this.themeToggle.addEventListener('click', () => {
+                        this.toggleTheme();
+                    });
+                }
+            }
+            
+            toggleTheme() {
+                const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                this.applyTheme(newTheme);
+                console.log(`主题切换: ${this.currentTheme} -> ${newTheme}`);
+            }
+            
+            applyTheme(theme) {
+                this.currentTheme = theme;
+                
+                if (theme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                }
+                
+                try {
+                    localStorage.setItem('theme', theme);
+                } catch (error) {
+                    console.warn('保存主题偏好失败:', error);
+                }
+                
+                this.updateToggleButton();
+            }
+            
+            updateToggleButton() {
+                if (!this.themeToggle) return;
+                
+                const isDark = this.currentTheme === 'dark';
+                this.themeToggle.setAttribute('title', 
+                    isDark ? '切换到亮色主题' : '切换到暗色主题'
+                );
+            }
+        }
+        
+        // 初始化主题管理器
+        document.addEventListener('DOMContentLoaded', () => {
+            new SimpleThemeManager();
+        });
+    </script>
+</body>
+</html>

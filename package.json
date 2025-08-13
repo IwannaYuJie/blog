@@ -5,8 +5,12 @@
   "main": "index.html",
   "scripts": {
     "dev": "live-server --port=3000",
-    "build": "echo 'Build complete'",
-    "deploy": "echo 'Ready for Netlify deployment'"
+    "build": "node build-optimize.js",
+    "build:analyze": "node build-optimize.js && echo 'Build analysis complete'",
+    "optimize": "node build-optimize.js",
+    "deploy": "npm run build && echo 'Ready for Netlify deployment'",
+    "perf:test": "echo 'Performance testing - check browser dev tools'",
+    "perf:report": "echo 'Performance report generated - check console'"
   },
   "keywords": [
     "blog",
