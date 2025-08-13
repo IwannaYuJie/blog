@@ -149,13 +149,7 @@ post = {
 }
 ```
 
-##### `displayStaticPosts()`
 
-显示静态文章（Firebase失败时的备用方案）。
-
-```javascript
-function displayStaticPosts(): void
-```
 
 #### 用户交互
 

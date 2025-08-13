@@ -7,7 +7,12 @@ let lastVisible = null;
 let isLoading = false;
 let currentCategory = 'all';
 const postsPerPage = 6;
-let db, auth, analytics; // 这些将从window.firebaseApp获取
+// Firebase服务变量
+let db = null;
+let auth = null;
+let analytics = null;
+let currentEditingPostId = null; // 当前编辑的文章ID
+let deletePostId = null; // 待删除的文章ID
 
 // 等待Firebase加载完成（带超时机制）
 function waitForFirebase() {
@@ -17,13 +22,11 @@ function waitForFirebase() {
         
         function checkFirebase() {
             if (window.firebaseApp) {
-                db = window.firebaseApp.db;
-                auth = window.firebaseApp.auth;
-                analytics = window.firebaseApp.analytics;
+                // Firebase服务已在firebase-config.js中初始化并声明为全局变量
                 console.log('🔥 Firebase服务加载成功');
                 resolve();
             } else if (attempts >= maxAttempts) {
-                console.warn('⚠️ Firebase加载超时，使用静态内容');
+                console.warn('⚠️ Firebase加载超时');
                 reject(new Error('Firebase加载超时'));
             } else {
                 attempts++;
@@ -44,12 +47,23 @@ const backToTopBtn = document.getElementById('back-to-top');
 const mobileMenu = document.getElementById('mobile-menu');
 const navMenu = document.querySelector('.nav-menu');
 
+// 文章管理相关DOM元素
+const addPostBtn = document.getElementById('add-post-btn');
+const adminPanel = document.getElementById('admin-panel');
+const postForm = document.getElementById('post-form');
+const formTitle = document.getElementById('form-title');
+const submitBtn = document.getElementById('submit-btn');
+const cancelBtn = document.getElementById('cancel-btn');
+const deleteModal = document.getElementById('delete-modal');
+const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+const deleteModalClose = document.getElementById('delete-modal-close');
+
 // 初始化应用
 document.addEventListener('DOMContentLoaded', async () => {
     await initializeApp();
     setupEventListeners();
-    setupNavigation();
-    setupScrollEffects();
+    setupAdminEventListeners();
 });
 
 // 应用初始化
@@ -61,25 +75,38 @@ async function initializeApp() {
         // 等待Firebase加载（带超时）
         await waitForFirebase();
         
-        // 匿名登录Firebase
-        await auth.signInAnonymously();
         console.log('✅ Firebase初始化成功');
         
-        // 监听认证状态
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                currentUser = user;
-                // 创建示例文章（如果数据库为空）
+        // 从window.firebaseApp获取Firebase服务
+        if (window.firebaseApp) {
+            db = window.firebaseApp.db;
+            auth = window.firebaseApp.auth;
+            analytics = window.firebaseApp.analytics;
+            
+            console.log('🔗 Firebase服务连接成功:', {
+                db: !!db,
+                auth: !!auth,
+                analytics: !!analytics
+            });
+        }
+        
+        // Firebase可用性检查已移除离线模式
+        
+        // 尝试连接Firestore
+        if (db) {
+            try {
                 await createSamplePosts();
-                // 加载文章
                 await loadPosts(true);
+            } catch (firestoreError) {
+                console.warn('⚠️ Firestore连接失败:', firestoreError.message);
             }
-        });
+        } else {
+            console.log('❌ Firestore不可用');
+        }
         
     } catch (error) {
-        console.error('❌ Firebase初始化失败:', error);
-        // 如果Firebase失败，显示静态内容
-        displayStaticPosts();
+        console.error('❌ Firebase初始化失败:', error.message);
+        // Firebase失败时不再显示静态内容
     }
 }
 
@@ -165,7 +192,7 @@ async function createSamplePosts() {
     }
 }
 
-// 加载文章
+// 加载文章（优化版）
 async function loadPosts(reset = false) {
     if (isLoading) return;
     
@@ -178,9 +205,16 @@ async function loadPosts(reset = false) {
             lastVisible = null;
         }
         
+        // 检查数据库连接
+        if (!db) {
+            console.warn('⚠️ Firestore未初始化');
+            return;
+        }
+        
         const postsRef = db.collection('posts');
         let q;
         
+        // 构建查询（添加索引优化）
         if (currentCategory === 'all') {
             q = postsRef
                 .orderBy('createdAt', 'desc')
@@ -196,7 +230,12 @@ async function loadPosts(reset = false) {
             q = q.startAfter(lastVisible);
         }
         
-        const snapshot = await q.get();
+        // 添加超时处理
+        const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('查询超时')), 10000);
+        });
+        
+        const snapshot = await Promise.race([q.get(), timeoutPromise]);
         
         if (reset) {
             postsContainer.innerHTML = '';
@@ -211,10 +250,27 @@ async function loadPosts(reset = false) {
         
         console.log(`✅ 成功加载 ${snapshot.size} 篇文章`);
         
+        // 批量处理文档数据
+        const posts = [];
         snapshot.forEach((doc) => {
-            const post = { id: doc.id, ...doc.data() };
-            displayPost(post);
+            const data = doc.data();
+            // 数据验证和清理
+            const post = {
+                id: doc.id,
+                title: data.title || '无标题',
+                excerpt: data.excerpt || '',
+                content: data.content || '',
+                category: data.category || 'life',
+                author: data.author || '博主',
+                createdAt: data.createdAt,
+                tags: Array.isArray(data.tags) ? data.tags : [],
+                readTime: data.readTime || 5
+            };
+            posts.push(post);
         });
+        
+        // 批量渲染文章
+        posts.forEach(post => displayPost(post));
         
         // 更新lastVisible
         if (!snapshot.empty) {
@@ -227,8 +283,14 @@ async function loadPosts(reset = false) {
         
     } catch (error) {
         console.error('❌ 加载文章失败:', error);
-        if (reset) {
-            displayStaticPosts();
+        
+        // 根据错误类型提供不同的处理
+        if (error.code === 'permission-denied') {
+            console.warn('⚠️ 权限不足');
+        } else if (error.code === 'unavailable') {
+            console.warn('⚠️ 服务不可用');
+        } else {
+            console.warn('⚠️ 网络错误');
         }
     } finally {
         isLoading = false;
@@ -240,6 +302,14 @@ function displayPost(post) {
     const postElement = document.createElement('div');
     postElement.className = 'post-card fade-in-up';
     postElement.innerHTML = `
+        <div class="post-actions">
+            <button class="action-btn edit" onclick="editPost('${post.id}')" title="编辑文章">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="action-btn delete" onclick="confirmDeletePost('${post.id}')" title="删除文章">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
         <div class="post-image">
             <i class="fas ${getCategoryIcon(post.category)}"></i>
         </div>
@@ -254,46 +324,23 @@ function displayPost(post) {
         </div>
     `;
     
-    postElement.addEventListener('click', () => {
+    postElement.addEventListener('click', (e) => {
+        // 如果点击的是操作按钮，不打开模态框
+        if (e.target.closest('.post-actions')) {
+            return;
+        }
         openPostModal(post);
     });
     
     postsContainer.appendChild(postElement);
 }
 
-// 显示静态文章（Firebase失败时的备用方案）
-function displayStaticPosts() {
-    const staticPosts = [
-        {
-            id: '1',
-            title: '欢迎来到我的博客！🎉',
-            excerpt: '这是我的第一篇博客文章，分享我的技术学习之路和生活感悟。',
-            category: 'life',
-            readTime: 2,
-            createdAt: new Date()
-        },
-        {
-            id: '2',
-            title: 'JavaScript ES6+ 新特性详解',
-            excerpt: '深入了解JavaScript ES6+的新特性，包括箭头函数、解构赋值、模板字符串等。',
-            category: 'tech',
-            readTime: 8,
-            createdAt: new Date(Date.now() - 86400000)
-        },
-        {
-            id: '3',
-            title: '程序员的自我修养',
-            excerpt: '作为程序员，除了技术能力，还需要培养哪些软技能？分享我的思考和建议。',
-            category: 'thoughts',
-            readTime: 6,
-            createdAt: new Date(Date.now() - 172800000)
-        }
-    ];
-    
-    postsContainer.innerHTML = '';
-    staticPosts.forEach(post => displayPost(post));
-    loadMoreBtn.style.display = 'none';
-}
+// 网络状态检测
+// 网络状态检查功能已删除
+
+// 网络状态指示器功能已删除
+
+// 静态文章显示功能已删除
 
 // 打开文章模态框
 function openPostModal(post) {
@@ -412,6 +459,10 @@ function setupEventListeners() {
         mobileMenu.classList.toggle('active');
         navMenu.classList.toggle('active');
     });
+    
+    // 设置导航和滚动效果
+    setupNavigation();
+    setupScrollEffects();
 }
 
 // 处理联系表单
@@ -434,6 +485,335 @@ async function handleContactForm(e) {
         console.error('❌ 发送消息失败:', error);
         alert('❌ 发送失败，请稍后重试。');
     }
+}
+
+// 设置管理员事件监听器
+function setupAdminEventListeners() {
+    // 添加文章按钮
+    if (addPostBtn) {
+        addPostBtn.addEventListener('click', () => {
+            showPostForm();
+        });
+    }
+    
+    // 表单提交
+    if (postForm) {
+        postForm.addEventListener('submit', handlePostSubmit);
+    }
+    
+    // 取消按钮
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+            hidePostForm();
+        });
+    }
+    
+    // 删除确认按钮
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', () => {
+            deletePost(deletePostId);
+        });
+    }
+    
+    // 取消删除按钮
+    if (cancelDeleteBtn) {
+        cancelDeleteBtn.addEventListener('click', () => {
+            hideDeleteModal();
+        });
+    }
+    
+    // 删除模态框关闭按钮
+    if (deleteModalClose) {
+        deleteModalClose.addEventListener('click', () => {
+            hideDeleteModal();
+        });
+    }
+    
+    // 点击模态框外部关闭
+    if (deleteModal) {
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) {
+                hideDeleteModal();
+            }
+        });
+    }
+}
+
+// 显示文章表单
+function showPostForm(post = null) {
+    if (!adminPanel || !postForm) return;
+    
+    currentEditingPostId = post ? post.id : null;
+    
+    if (post) {
+        // 编辑模式
+        formTitle.textContent = '编辑文章';
+        submitBtn.textContent = '更新文章';
+        
+        // 填充表单数据
+        document.getElementById('post-title').value = post.title || '';
+        document.getElementById('post-excerpt').value = post.excerpt || '';
+        document.getElementById('post-content').value = post.content || '';
+        document.getElementById('post-category').value = post.category || 'tech';
+        document.getElementById('post-tags').value = post.tags ? post.tags.join(', ') : '';
+        document.getElementById('post-read-time').value = post.readTime || 5;
+    } else {
+        // 新建模式
+        formTitle.textContent = '添加新文章';
+        submitBtn.textContent = '发布文章';
+        postForm.reset();
+    }
+    
+    adminPanel.style.display = 'block';
+}
+
+// 隐藏文章表单
+function hidePostForm() {
+    if (!adminPanel) return;
+    
+    adminPanel.style.display = 'none';
+    currentEditingPostId = null;
+    if (postForm) postForm.reset();
+}
+
+// 处理文章表单提交
+async function handlePostSubmit(e) {
+    e.preventDefault();
+    
+    if (!db) {
+        alert('❌ 数据库未初始化');
+        return;
+    }
+    
+    const formData = new FormData(postForm);
+    
+    // 数据验证
+    const title = formData.get('title')?.trim();
+    const excerpt = formData.get('excerpt')?.trim();
+    const content = formData.get('content')?.trim();
+    const category = formData.get('category');
+    const tagsInput = formData.get('tags')?.trim() || '';
+    
+    if (!title || !excerpt || !content) {
+        alert('❌ 请填写完整的文章信息');
+        return;
+    }
+    
+    if (title.length > 100) {
+        alert('❌ 标题长度不能超过100个字符');
+        return;
+    }
+    
+    if (excerpt.length > 200) {
+        alert('❌ 摘要长度不能超过200个字符');
+        return;
+    }
+    
+    const tags = tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag && tag.length <= 20);
+    
+    const postData = {
+        title,
+        excerpt,
+        content,
+        category,
+        tags,
+        readTime: Math.max(1, parseInt(formData.get('readTime')) || Math.ceil(content.length / 200)),
+        author: '博主',
+        updatedAt: firebase.firestore.Timestamp.now()
+    };
+    
+    try {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 处理中...';
+        
+        // 添加超时处理
+        const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('操作超时')), 15000);
+        });
+        
+        if (currentEditingPostId) {
+            // 更新文章
+            const updatePromise = db.collection('posts').doc(currentEditingPostId).update(postData);
+            await Promise.race([updatePromise, timeoutPromise]);
+            console.log('✅ 文章更新成功');
+            alert('✅ 文章更新成功！');
+        } else {
+            // 创建新文章
+            postData.createdAt = firebase.firestore.Timestamp.now();
+            const addPromise = db.collection('posts').add(postData);
+            await Promise.race([addPromise, timeoutPromise]);
+            console.log('✅ 文章创建成功');
+            alert('✅ 文章发布成功！');
+        }
+        
+        hidePostForm();
+        loadPosts(true); // 重新加载文章列表
+        
+    } catch (error) {
+        console.error('❌ 文章操作失败:', error);
+        
+        let errorMessage = '❌ 操作失败，请稍后重试';
+        if (error.code === 'permission-denied') {
+            errorMessage = '❌ 权限不足，无法执行此操作';
+        } else if (error.code === 'unavailable') {
+            errorMessage = '❌ 服务暂时不可用，请稍后重试';
+        } else if (error.message === '操作超时') {
+            errorMessage = '❌ 操作超时，请检查网络连接';
+        }
+        
+        alert(errorMessage);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = currentEditingPostId ? '更新文章' : '发布文章';
+    }
+}
+
+// 编辑文章（优化版）
+async function editPost(postId) {
+    if (!db) {
+        alert('❌ 数据库未初始化');
+        return;
+    }
+    
+    if (!postId) {
+        alert('❌ 文章ID无效');
+        return;
+    }
+    
+    try {
+        // 添加加载状态提示
+        const loadingToast = document.createElement('div');
+        loadingToast.className = 'loading-toast';
+        loadingToast.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在加载文章...';
+        document.body.appendChild(loadingToast);
+        
+        // 添加超时处理
+        const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('加载超时')), 8000);
+        });
+        
+        const docPromise = db.collection('posts').doc(postId).get();
+        const doc = await Promise.race([docPromise, timeoutPromise]);
+        
+        // 移除加载提示
+        document.body.removeChild(loadingToast);
+        
+        if (doc.exists) {
+            const data = doc.data();
+            const post = {
+                id: doc.id,
+                title: data.title || '',
+                excerpt: data.excerpt || '',
+                content: data.content || '',
+                category: data.category || 'life',
+                tags: Array.isArray(data.tags) ? data.tags : [],
+                readTime: data.readTime || 5
+            };
+            showPostForm(post);
+        } else {
+            alert('❌ 文章不存在或已被删除');
+        }
+    } catch (error) {
+        // 确保移除加载提示
+        const loadingToast = document.querySelector('.loading-toast');
+        if (loadingToast) {
+            document.body.removeChild(loadingToast);
+        }
+        
+        console.error('❌ 获取文章失败:', error);
+        
+        let errorMessage = '❌ 获取文章失败';
+        if (error.code === 'permission-denied') {
+            errorMessage = '❌ 权限不足，无法编辑此文章';
+        } else if (error.code === 'unavailable') {
+            errorMessage = '❌ 服务暂时不可用，请稍后重试';
+        } else if (error.message === '加载超时') {
+            errorMessage = '❌ 加载超时，请检查网络连接';
+        } else if (error.code === 'not-found') {
+            errorMessage = '❌ 文章不存在或已被删除';
+        }
+        
+        alert(errorMessage);
+    }
+}
+
+// 确认删除文章
+function confirmDeletePost(postId) {
+    deletePostId = postId;
+    if (deleteModal) {
+        deleteModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+// 删除文章（优化版）
+async function deletePost(postId) {
+    if (!db || !postId) {
+        alert('❌ 删除失败：数据库未初始化或文章ID无效');
+        return;
+    }
+    
+    try {
+        confirmDeleteBtn.disabled = true;
+        confirmDeleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 删除中...';
+        
+        // 添加超时处理
+        const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('删除超时')), 10000);
+        });
+        
+        // 先检查文章是否存在
+        const docRef = db.collection('posts').doc(postId);
+        const doc = await docRef.get();
+        
+        if (!doc.exists) {
+            alert('❌ 文章不存在或已被删除');
+            hideDeleteModal();
+            loadPosts(true);
+            return;
+        }
+        
+        // 执行删除操作
+        const deletePromise = docRef.delete();
+        await Promise.race([deletePromise, timeoutPromise]);
+        
+        console.log('✅ 文章删除成功');
+        alert('✅ 文章删除成功！');
+        
+        hideDeleteModal();
+        loadPosts(true); // 重新加载文章列表
+        
+    } catch (error) {
+        console.error('❌ 删除文章失败:', error);
+        
+        let errorMessage = '❌ 删除失败，请稍后重试';
+        if (error.code === 'permission-denied') {
+            errorMessage = '❌ 权限不足，无法删除此文章';
+        } else if (error.code === 'unavailable') {
+            errorMessage = '❌ 服务暂时不可用，请稍后重试';
+        } else if (error.message === '删除超时') {
+            errorMessage = '❌ 删除超时，请检查网络连接';
+        } else if (error.code === 'not-found') {
+            errorMessage = '❌ 文章不存在或已被删除';
+            hideDeleteModal();
+            loadPosts(true);
+            return;
+        }
+        
+        alert(errorMessage);
+    } finally {
+        confirmDeleteBtn.disabled = false;
+        confirmDeleteBtn.innerHTML = '<i class="fas fa-trash"></i> 确认删除';
+    }
+}
+
+// 隐藏删除模态框
+function hideDeleteModal() {
+    if (deleteModal) {
+        deleteModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+    deletePostId = null;
 }
 
 // 设置导航
@@ -496,6 +876,15 @@ function setupScrollEffects() {
             behavior: 'smooth'
         });
     });
+    
+    // 网络状态监听
+    window.addEventListener('online', () => {
+        // 网络状态检查已删除
+        console.log('🌐 网络已连接');
+        // 可以在这里添加重新连接Firebase的逻辑
+    });
+    
+    // 离线事件监听已删除
 }
 
 // 工具函数
@@ -539,7 +928,16 @@ window.blogApp = {
     loadPosts,
     displayPost,
     getCategoryName,
-    formatDate
+    formatDate,
+    editPost,
+    confirmDeletePost,
+    deletePost
 };
+
+// 将函数添加到全局作用域，供HTML中的onclick使用
+window.editPost = editPost;
+window.confirmDeletePost = confirmDeletePost;
+window.deletePost = deletePost;
+window.openPostModal = openPostModal;
 
 console.log('🚀 博客应用初始化完成');

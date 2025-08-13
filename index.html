@@ -62,7 +62,58 @@
         <!-- 文章列表 -->
         <section id="posts" class="posts-section">
             <div class="container">
-                <h2 class="section-title">最新文章</h2>
+                <div class="posts-header">
+                    <h2 class="section-title">最新文章</h2>
+                    <button class="btn btn-primary" id="add-post-btn">
+                        <i class="fas fa-plus"></i> 添加文章
+                    </button>
+                </div>
+                
+                <!-- 文章管理面板 -->
+                <div class="admin-panel" id="admin-panel" style="display: none;">
+                    <div class="admin-form">
+                        <h3 id="form-title">添加新文章</h3>
+                        <form id="post-form">
+                            <div class="form-group">
+                                <label for="post-title">标题</label>
+                                <input type="text" id="post-title" name="title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="post-category">分类</label>
+                                <select id="post-category" name="category" required>
+                                    <option value="tech">技术</option>
+                                    <option value="life">生活</option>
+                                    <option value="thoughts">思考</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="post-excerpt">摘要</label>
+                                <textarea id="post-excerpt" name="excerpt" rows="3" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="post-content">内容</label>
+                                <textarea id="post-content" name="content" rows="8" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="post-tags">标签 (用逗号分隔)</label>
+                                <input type="text" id="post-tags" name="tags" placeholder="例如: JavaScript, React, 前端">
+                            </div>
+                            <div class="form-group">
+                                <label for="post-read-time">预计阅读时间 (分钟)</label>
+                                <input type="number" id="post-read-time" name="readTime" min="1" max="60" value="5" required>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary" id="submit-btn">
+                                    <i class="fas fa-save"></i> 保存文章
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="cancel-btn">
+                                    <i class="fas fa-times"></i> 取消
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
                 <div class="posts-filter">
                     <button class="filter-btn active" data-category="all">全部</button>
                     <button class="filter-btn" data-category="tech">技术</button>
@@ -181,11 +232,32 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Firebase CDN -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+    <!-- 删除确认模态框 -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>确认删除</h3>
+                <button class="modal-close" id="delete-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>你确定要删除这篇文章吗？此操作不可撤销。</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="confirm-delete-btn">
+                    <i class="fas fa-trash"></i> 确认删除
+                </button>
+                <button class="btn btn-secondary" id="cancel-delete-btn">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase CDN v12.1.0 -->
+    <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics-compat.js"></script>
     
     <!-- Firebase配置 -->
     <script src="js/firebase-config.js"></script>
