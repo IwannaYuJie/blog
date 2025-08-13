@@ -280,6 +280,25 @@ async function initializeApp() {
                 auth: !!auth,
                 analytics: !!analytics
             });
+
+            // 匿名认证 (关键修复)
+            if (auth && !auth.currentUser) {
+                try {
+                    await auth.signInAnonymously();
+                    console.log('✅ 匿名认证成功');
+                } catch (error) {
+                    console.error('❌ 匿名认证失败:', error);
+                    // 如果认证是必须的，可以在这里显示错误并停止后续操作
+                    if (window.loadingErrorHandler) {
+                        window.loadingErrorHandler.showErrorState(
+                            postsContainer,
+                            '认证失败',
+                            '无法连接到认证服务，部分功能可能无法使用。',
+                            false
+                        );
+                    }
+                }
+            }
         }
         
         // 尝试连接Firestore
