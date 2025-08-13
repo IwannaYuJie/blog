@@ -72,30 +72,9 @@ async function initializeApp(): Promise<void>
 - 等待Firebase加载
 - 执行匿名登录
 - 设置认证状态监听
-- 创建示例文章
 - 加载文章列表
 
 #### 文章管理
-
-##### `createSamplePosts()`
-
-创建示例文章（仅在数据库为空时）。
-
-```javascript
-async function createSamplePosts(): Promise<void>
-```
-
-**示例文章结构：**
-```javascript
-{
-  title: "文章标题",
-  content: "文章内容",
-  excerpt: "文章摘要",
-  category: "tech" | "life" | "thoughts",
-  createdAt: Timestamp,
-  readTime: number // 分钟
-}
-```
 
 ##### `loadPosts(reset?)`
 

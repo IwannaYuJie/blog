@@ -242,8 +242,8 @@ loadPosts(true); // 重新加载文章
 
 3. **初始化测试数据**
    ```javascript
-   // 在浏览器控制台运行
-   createSamplePosts(); // 创建示例文章
+   // 测试数据需要手动通过管理界面添加
+   // 或者直接在Firebase控制台中添加
    ```
 
 ### Firestore数据结构
@@ -433,7 +433,6 @@ service cloud.firestore {
    
    // 测试Firebase功能
    loadPosts(true);
-   createSamplePosts();
    ```
 
 2. **Network面板**
