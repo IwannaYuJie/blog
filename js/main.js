@@ -1,206 +1,23 @@
-// 由于模块导入问题，我们使用CDN方式加载Firebase
-// Firebase将通过script标签在HTML中加载
+import {
+    db,
+    auth,
+    signIn,
+    loadPosts,
+    handleContactForm,
+    handlePostSubmit,
+    fetchPostForEdit,
+    deletePostFromDb
+} from './modules/firebase.js';
+import './modules/theme.js'; // Import to initialize theme manager
+import { initAllAnimations } from './modules/animations.js';
 
-// ========================================
-// 横幅视差滚动和动画效果
-// ========================================
+// Animation-related functions have been moved to js/modules/animations.js
 
-// 视差滚动效果
-function initParallaxEffects() {
-    const hero = document.querySelector('.hero');
-    const heroShapes = document.querySelectorAll('.hero-shape');
-    const heroFloatingElements = document.querySelectorAll('.hero-floating-element');
-    const heroContent = document.querySelector('.hero-content');
-    const heroVisual = document.querySelector('.hero-visual');
-    
-    if (!hero) return;
-    
-    function updateParallax() {
-        const scrolled = window.pageYOffset;
-        const rate = scrolled * -0.5;
-        const rateShapes = scrolled * -0.3;
-        const rateFloating = scrolled * -0.2;
-        
-        // 主背景视差
-        hero.style.transform = `translateY(${rate}px)`;
-        
-        // 几何图形视差
-        heroShapes.forEach((shape, index) => {
-            const speed = (index + 1) * 0.1;
-            shape.style.transform = `translateY(${rateShapes * speed}px) rotate(${scrolled * 0.05}deg)`;
-        });
-        
-        // 浮动元素视差
-        heroFloatingElements.forEach((element, index) => {
-            const speed = (index + 1) * 0.15;
-            element.style.transform = `translateY(${rateFloating * speed}px) rotate(${scrolled * 0.02}deg)`;
-        });
-        
-        // 内容区域视差
-        if (heroContent) {
-            heroContent.style.transform = `translateY(${scrolled * 0.1}px)`;
-        }
-        
-        if (heroVisual) {
-            heroVisual.style.transform = `translateY(${scrolled * 0.05}px)`;
-        }
-    }
-    
-    // 节流函数优化性能
-    let ticking = false;
-    function requestTick() {
-        if (!ticking) {
-            requestAnimationFrame(updateParallax);
-            ticking = true;
-            setTimeout(() => { ticking = false; }, 16); // 60fps
-        }
-    }
-    
-    // 监听滚动事件
-    window.addEventListener('scroll', requestTick, { passive: true });
-}
-
-// 横幅元素进入动画
-function initHeroAnimations() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animate-in');
-            }
-        });
-    }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    });
-    
-    // 观察需要动画的元素
-    const animateElements = document.querySelectorAll('.hero-badge, .hero-title, .hero-subtitle, .hero-stats, .hero-buttons, .hero-visual');
-    animateElements.forEach(el => observer.observe(el));
-}
-
-// 技术图标悬停效果
-function initTechIconEffects() {
-    const techIcons = document.querySelectorAll('.tech-icon');
-    
-    techIcons.forEach(icon => {
-        icon.addEventListener('mouseenter', () => {
-            icon.style.transform = 'scale(1.2) rotate(10deg)';
-            icon.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.3)';
-        });
-        
-        icon.addEventListener('mouseleave', () => {
-            icon.style.transform = '';
-            icon.style.boxShadow = '';
-        });
-    });
-}
-
-// CTA按钮点击波纹效果
-function initButtonRippleEffect() {
-    const ctaButtons = document.querySelectorAll('.hero-cta-primary, .hero-cta-secondary');
-    
-    ctaButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            const ripple = document.createElement('span');
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
-            
-            ripple.style.cssText = `
-                position: absolute;
-                width: ${size}px;
-                height: ${size}px;
-                left: ${x}px;
-                top: ${y}px;
-                background: rgba(255, 255, 255, 0.3);
-                border-radius: 50%;
-                transform: scale(0);
-                animation: ripple 0.6s ease-out;
-                pointer-events: none;
-            `;
-            
-            this.style.position = 'relative';
-            this.style.overflow = 'hidden';
-            this.appendChild(ripple);
-            
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
-        });
-    });
-    
-    // 添加波纹动画CSS
-    if (!document.querySelector('#ripple-styles')) {
-        const style = document.createElement('style');
-        style.id = 'ripple-styles';
-        style.textContent = `
-            @keyframes ripple {
-                to {
-                    transform: scale(2);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-}
-
-// 滚动指示器点击效果
-function initScrollIndicator() {
-    const scrollIndicator = document.querySelector('.hero-scroll-indicator');
-    
-    if (scrollIndicator) {
-        scrollIndicator.addEventListener('click', () => {
-            const postsSection = document.querySelector('#posts');
-            if (postsSection) {
-                postsSection.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-        
-        scrollIndicator.style.cursor = 'pointer';
-    }
-}
-
-// 全局变量
-let currentUser = null;
-let lastVisible = null;
-let isLoading = false;
+// UI-related state variables. Data-related state is now in the firebase module.
+let currentUser = null; // Will be updated via auth state listener
 let currentCategory = 'all';
-const postsPerPage = 6;
-// Firebase服务变量
-let db = null;
-let auth = null;
-let analytics = null;
-let currentEditingPostId = null; // 当前编辑的文章ID
-let deletePostId = null; // 待删除的文章ID
-
-// 等待Firebase加载完成（带超时机制）
-function waitForFirebase() {
-    return new Promise((resolve, reject) => {
-        let attempts = 0;
-        const maxAttempts = 50; // 5秒超时
-        
-        function checkFirebase() {
-            if (window.firebaseApp) {
-                // Firebase服务已在firebase-config.js中初始化并声明为全局变量
-                console.log('🔥 Firebase服务加载成功');
-                resolve();
-            } else if (attempts >= maxAttempts) {
-                console.warn('⚠️ Firebase加载超时');
-                reject(new Error('Firebase加载超时'));
-            } else {
-                attempts++;
-                setTimeout(checkFirebase, 100);
-            }
-        }
-        
-        checkFirebase();
-    });
-}
+let currentEditingPostId = null; // ID of the post being edited
+let deletePostId = null; // ID of the post to be deleted
 
 // DOM元素
 const postsContainer = document.getElementById('posts-container');
@@ -225,24 +42,8 @@ const deleteModalClose = document.getElementById('delete-modal-close');
 
 // 初始化应用
 document.addEventListener('DOMContentLoaded', async () => {
-    // 初始化页面加载器
-    initPageLoader();
-    
-    // 初始化主题管理器（优先初始化，避免闪烁）
-    initThemeManager();
-    
-    // 初始化横幅效果
-    initParallaxEffects();
-    initHeroAnimations();
-    initTechIconEffects();
-    initButtonRippleEffect();
-    initScrollIndicator();
-    
-    // 初始化滚动动画系统
-    initScrollAnimations();
-    initScrollProgress();
-    initBackToTop();
-    initSmoothScrolling();
+    // Initialize all animations and effects from the new module
+    initAllAnimations();
     
     // 等待微交互系统初始化完成
     if (window.microInteractions) {
@@ -254,273 +55,64 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupAdminEventListeners();
 });
 
-// 应用初始化
+// Refactored application initializer
 async function initializeApp() {
-    // 显示骨架屏加载状态
+    // Show loading state (this can be moved to a UI module later)
     if (window.loadingErrorHandler) {
         window.loadingErrorHandler.showSkeletonPosts(postsContainer, 3);
     } else {
         postsContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>正在加载文章...</p></div>';
     }
-    
-    try {
-        // 等待Firebase加载（带超时）
-        await waitForFirebase();
-        
-        console.log('✅ Firebase初始化成功');
-        
-        // 从window.firebaseApp获取Firebase服务
-        if (window.firebaseApp) {
-            db = window.firebaseApp.db;
-            auth = window.firebaseApp.auth;
-            analytics = window.firebaseApp.analytics;
-            
-            console.log('🔗 Firebase服务连接成功:', {
-                db: !!db,
-                auth: !!auth,
-                analytics: !!analytics
-            });
 
-            // 匿名认证 (关键修复)
-            if (auth && !auth.currentUser) {
-                try {
-                    await auth.signInAnonymously();
-                    console.log('✅ 匿名认证成功');
-                } catch (error) {
-                    console.error('❌ 匿名认证失败:', error);
-                    // 如果认证是必须的，可以在这里显示错误并停止后续操作
-                    if (window.loadingErrorHandler) {
-                        window.loadingErrorHandler.showErrorState(
-                            postsContainer,
-                            '认证失败',
-                            '无法连接到认证服务，部分功能可能无法使用。',
-                            false
-                        );
-                    }
-                }
-            }
-        }
-        
-        // 尝试连接Firestore
-        if (db) {
-            try {
-                await loadPosts(true);
-            } catch (firestoreError) {
-                console.warn('⚠️ Firestore连接失败:', firestoreError.message);
-                
-                // 显示Firestore连接错误
-                if (window.loadingErrorHandler) {
-                    window.loadingErrorHandler.showErrorState(
-                        postsContainer,
-                        '数据库连接失败',
-                        'Firestore数据库连接失败，请检查网络连接或稍后重试。',
-                        true
-                    );
-                }
-            }
-        } else {
-            console.log('❌ Firestore不可用');
-            
-            // 显示服务不可用错误
-            if (window.loadingErrorHandler) {
-                window.loadingErrorHandler.showErrorState(
-                    postsContainer,
-                    '服务不可用',
-                    '数据库服务暂时不可用，请稍后重试。',
-                    true
-                );
-            }
-        }
-        
+    try {
+        currentUser = await signIn(); // Sign in anonymously and get user state
+        await loadInitialPosts(); // Load initial posts
     } catch (error) {
-        console.error('❌ Firebase初始化失败:', error.message);
-        
-        // 显示Firebase初始化错误
+        console.error('❌ Application initialization failed:', error);
         if (window.loadingErrorHandler) {
-            let errorMessage = 'Firebase服务初始化失败，请刷新页面重试。';
-            if (error.message === 'Firebase加载超时') {
-                errorMessage = 'Firebase服务加载超时，请检查网络连接后刷新页面。';
-            }
-            
             window.loadingErrorHandler.showErrorState(
                 postsContainer,
                 '初始化失败',
-                errorMessage,
+                `应用初始化失败: ${error.message}`,
                 true
             );
         } else {
-            postsContainer.innerHTML = '<div class="error-message"><p>初始化失败，请刷新页面重试。</p></div>';
+            postsContainer.innerHTML = `<div class="error-message"><p>初始化失败: ${error.message}</p></div>`;
         }
     }
 }
 
-
-
-// 加载文章（优化版）
-async function loadPosts(reset = false) {
-    if (isLoading) return;
-    
-    isLoading = true;
-    console.log('📖 开始加载文章...');
-    
-    try {
-        if (reset) {
-            // 显示骨架屏而不是简单的加载提示
-            if (window.loadingErrorHandler) {
-                window.loadingErrorHandler.showSkeletonPosts(postsContainer, 3);
-            } else {
-                postsContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>正在加载文章...</p></div>';
-            }
-            lastVisible = null;
-        }
-        
-        // 检查数据库连接
-        if (!db) {
-            console.warn('⚠️ Firestore未初始化');
-            return;
-        }
-        
-        const postsRef = db.collection('posts');
-        let q;
-        
-        // 构建查询（添加索引优化）
-        if (currentCategory === 'all') {
-            q = postsRef
-                .orderBy('createdAt', 'desc')
-                .limit(postsPerPage);
+// Helper to load initial set of posts
+function loadInitialPosts() {
+    const emptyCallback = () => {
+        if (window.loadingErrorHandler) {
+            window.loadingErrorHandler.showEmptyState(postsContainer, '暂无文章', '还没有发布任何文章，请稍后再来查看。', true);
         } else {
-            q = postsRef
-                .where('category', '==', currentCategory)
-                .orderBy('createdAt', 'desc')
-                .limit(postsPerPage);
+            postsContainer.innerHTML = '<div class="no-posts"><p>暂无文章</p></div>';
         }
-        
-        if (lastVisible && !reset) {
-            q = q.startAfter(lastVisible);
-        }
-        
-        // 添加超时处理
-        const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('查询超时')), 10000);
-        });
-        
-        const snapshot = await Promise.race([q.get(), timeoutPromise]);
-        
-        if (reset) {
-            postsContainer.innerHTML = '';
-        }
-        
-        if (snapshot.empty && reset) {
-            // 显示空状态而不是简单的文本
-            if (window.loadingErrorHandler) {
-                window.loadingErrorHandler.showEmptyState(
-                    postsContainer, 
-                    '暂无文章', 
-                    '还没有发布任何文章，请稍后再来查看。',
-                    true
-                );
-            } else {
-                postsContainer.innerHTML = '<div class="no-posts"><p>暂无文章</p></div>';
-            }
-            loadMoreBtn.style.display = 'none';
-            console.log('📄 数据库中暂无文章');
-            return;
-        }
-        
-        console.log(`✅ 成功加载 ${snapshot.size} 篇文章`);
-        
-        // 批量处理文档数据
-        const posts = [];
-        snapshot.forEach((doc) => {
-            const data = doc.data();
-            // 数据验证和清理
-            const post = {
-                id: doc.id,
-                title: data.title || '无标题',
-                excerpt: data.excerpt || '',
-                content: data.content || '',
-                category: data.category || 'life',
-                author: data.author || '博主',
-                createdAt: data.createdAt,
-                tags: Array.isArray(data.tags) ? data.tags : [],
-                readTime: data.readTime || 5
-            };
-            posts.push(post);
-        });
-        
-        // 批量渲染文章
-        posts.forEach(post => displayPost(post));
-        
-        // 增强新加载文章的动画效果
-        setTimeout(() => {
-            if (window.ScrollAnimations) {
-                window.ScrollAnimations.enhancePostCardAnimations();
-            }
-        }, 100);
-        
-        // 更新lastVisible
-        if (!snapshot.empty) {
-            lastVisible = snapshot.docs[snapshot.docs.length - 1];
-        }
-        
-        // 控制加载更多按钮显示
-        loadMoreBtn.style.display = snapshot.size < postsPerPage ? 'none' : 'block';
-        console.log('🎉 文章加载完成');
-        
-    } catch (error) {
-        console.error('❌ 加载文章失败:', error);
-        
-        // 根据错误类型提供不同的处理和显示
-        let errorTitle = '加载失败';
-        let errorMessage = '抱歉，文章加载失败。请检查网络连接后重试。';
-        
-        if (error.code === 'permission-denied') {
-            errorTitle = '权限不足';
-            errorMessage = '抱歉，您没有权限访问这些内容。';
-            console.warn('⚠️ 权限不足');
-        } else if (error.code === 'unavailable') {
-            errorTitle = '服务不可用';
-            errorMessage = '服务暂时不可用，请稍后重试。';
-            console.warn('⚠️ 服务不可用');
-        } else if (error.message === '查询超时') {
-            errorTitle = '加载超时';
-            errorMessage = '加载时间过长，请检查网络连接后重试。';
-            console.warn('⚠️ 查询超时');
+    };
+
+    const errorCallback = (error) => {
+        if (window.loadingErrorHandler) {
+            window.loadingErrorHandler.showErrorState(postsContainer, '加载失败', `加载文章时出错: ${error.message}`, true);
         } else {
-            console.warn('⚠️ 网络错误');
+            postsContainer.innerHTML = `<div class="error-message"><p>加载文章时出错: ${error.message}</p></div>`;
         }
-        
-        // 显示错误状态
-        if (reset && window.loadingErrorHandler) {
-            window.loadingErrorHandler.showErrorState(
-                postsContainer,
-                errorTitle,
-                errorMessage,
-                true
-            );
-        } else if (reset) {
-            postsContainer.innerHTML = `<div class="error-message"><p>${errorMessage}</p></div>`;
-        }
-        
-        // 隐藏加载更多按钮
-        if (loadMoreBtn) {
-            loadMoreBtn.style.display = 'none';
-        }
-    } finally {
-        isLoading = false;
-    }
+    };
+
+    return loadPosts(true, currentCategory, postsContainer, loadMoreBtn, displayPost, emptyCallback, errorCallback);
 }
 
-// 显示文章
+// Shows a single post card in the UI
 function displayPost(post) {
     const postElement = document.createElement('div');
     postElement.className = 'post-card fade-in-up';
     postElement.innerHTML = `
         <div class="post-actions">
-            <button class="action-btn edit" onclick="editPost('${post.id}')" title="编辑文章">
+            <button class="action-btn edit" title="编辑文章">
                 <i class="fas fa-edit"></i>
             </button>
-            <button class="action-btn delete" onclick="confirmDeletePost('${post.id}')" title="删除文章">
+            <button class="action-btn delete" title="删除文章">
                 <i class="fas fa-trash"></i>
             </button>
         </div>
@@ -537,9 +129,17 @@ function displayPost(post) {
             </div>
         </div>
     `;
+
+    // Add event listeners instead of using onclick="..."
+    postElement.querySelector('.edit').addEventListener('click', () => {
+        editPost(post.id);
+    });
+
+    postElement.querySelector('.delete').addEventListener('click', () => {
+        confirmDeletePost(post.id);
+    });
     
     postElement.addEventListener('click', (e) => {
-        // 如果点击的是操作按钮，不打开模态框
         if (e.target.closest('.post-actions')) {
             return;
         }
@@ -656,13 +256,19 @@ function setupEventListeners() {
             filterBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentCategory = btn.dataset.category;
-            loadPosts(true);
+            loadInitialPosts();
         });
     });
     
     // 加载更多按钮
     loadMoreBtn.addEventListener('click', () => {
-        loadPosts(false);
+        const emptyCallback = () => { /* No-op on subsequent loads */ };
+        const errorCallback = (error) => {
+            if (window.loadingErrorHandler) {
+                window.loadingErrorHandler.showErrorToast(`加载更多文章失败: ${error.message}`);
+            }
+        };
+        loadPosts(false, currentCategory, postsContainer, loadMoreBtn, displayPost, emptyCallback, errorCallback);
     });
     
     // 联系表单
@@ -698,154 +304,57 @@ function setupEventListeners() {
     // 监听网络恢复事件
     window.addEventListener('networkRestored', () => {
         console.log('🌐 网络恢复，重新加载数据');
-        loadPosts(true);
+        loadInitialPosts();
     });
     
     // 监听重试请求事件
     window.addEventListener('retryRequested', () => {
         console.log('🔄 用户请求重试');
-        loadPosts(true);
+        loadInitialPosts();
     });
 }
 
-// 处理联系表单
-async function handleContactForm(e) {
-    e.preventDefault();
-    
-    const submitBtn = contactForm.querySelector('.form-submit');
-    const originalText = submitBtn.innerHTML;
-    
-    // 显示加载状态
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<div class="btn-spinner"></div><span class="btn-text">发送中...</span>';
-    
-    // 微交互反馈
-    if (window.microInteractions) {
-        window.microInteractions.showLoadingState(submitBtn);
-    }
-    
-    const formData = new FormData(contactForm);
-    const data = {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        message: formData.get('message'),
-        createdAt: new Date()
-    };
-    
-    try {
-        // 检查数据库连接
-        if (!db) {
-            throw new Error('数据库未初始化');
-        }
-        
-        // 添加超时处理
-        const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('发送超时')), 10000);
-        });
-        
-        const sendPromise = db.collection('messages').add(data);
-        await Promise.race([sendPromise, timeoutPromise]);
-        
-        // 显示成功状态
-        submitBtn.innerHTML = '<i class="btn-success-icon fas fa-check"></i><span class="btn-text">发送成功</span>';
-        
-        // 微交互成功反馈
-        if (window.microInteractions) {
-            window.microInteractions.hideLoadingState(submitBtn);
-            window.microInteractions.showSuccessFeedback(submitBtn, '消息发送成功');
-        }
-        
-        // 显示成功提示
-        if (window.loadingErrorHandler) {
-            window.loadingErrorHandler.showSuccessToast('消息发送成功！感谢您的留言。');
-        } else {
-            alert('✅ 消息发送成功！感谢您的留言。');
-        }
-        
-        contactForm.reset();
-        
-        // 恢复按钮状态
-        setTimeout(() => {
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-        }, 2000);
-        
-    } catch (error) {
-        console.error('❌ 发送消息失败:', error);
-        
-        let errorMessage = '发送失败，请稍后重试。';
-        if (error.code === 'permission-denied') {
-            errorMessage = '权限不足，无法发送消息。';
-        } else if (error.code === 'unavailable') {
-            errorMessage = '服务暂时不可用，请稍后重试。';
-        } else if (error.message === '发送超时') {
-            errorMessage = '发送超时，请检查网络连接后重试。';
-        } else if (error.message === '数据库未初始化') {
-            errorMessage = '服务未就绪，请刷新页面后重试。';
-        }
-        
-        // 微交互错误反馈
-        if (window.microInteractions) {
-            window.microInteractions.hideLoadingState(submitBtn);
-            window.microInteractions.showErrorFeedback(submitBtn, errorMessage);
-        }
-        
-        // 显示错误提示
-        if (window.loadingErrorHandler) {
-            window.loadingErrorHandler.showErrorToast(errorMessage);
-        } else {
-            alert('❌ ' + errorMessage);
-        }
-        
-        // 恢复按钮状态
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-    }
-}
-
-// 设置管理员事件监听器
+// Refactored admin event listeners
 function setupAdminEventListeners() {
-    // 添加文章按钮
     if (addPostBtn) {
-        addPostBtn.addEventListener('click', () => {
-            showPostForm();
-        });
+        addPostBtn.addEventListener('click', () => showPostForm());
     }
     
-    // 表单提交
     if (postForm) {
-        postForm.addEventListener('submit', handlePostSubmit);
+        postForm.addEventListener('submit', async (e) => {
+            const success = await handlePostSubmit(e, currentEditingPostId);
+            if (success) {
+                hidePostForm();
+                loadInitialPosts();
+            }
+        });
     }
     
-    // 取消按钮
     if (cancelBtn) {
-        cancelBtn.addEventListener('click', () => {
-            hidePostForm();
-        });
+        cancelBtn.addEventListener('click', hidePostForm);
     }
     
-    // 删除确认按钮
     if (confirmDeleteBtn) {
-        confirmDeleteBtn.addEventListener('click', () => {
-            deletePost(deletePostId);
+        confirmDeleteBtn.addEventListener('click', async () => {
+            if (deletePostId) {
+                const success = await deletePostFromDb(deletePostId);
+                if (success) {
+                    hideDeleteModal();
+                    loadInitialPosts();
+                }
+                deletePostId = null;
+            }
         });
     }
     
-    // 取消删除按钮
     if (cancelDeleteBtn) {
-        cancelDeleteBtn.addEventListener('click', () => {
-            hideDeleteModal();
-        });
+        cancelDeleteBtn.addEventListener('click', hideDeleteModal);
     }
     
-    // 删除模态框关闭按钮
     if (deleteModalClose) {
-        deleteModalClose.addEventListener('click', () => {
-            hideDeleteModal();
-        });
+        deleteModalClose.addEventListener('click', hideDeleteModal);
     }
     
-    // 点击模态框外部关闭
     if (deleteModal) {
         deleteModal.addEventListener('click', (e) => {
             if (e.target === deleteModal) {
@@ -855,18 +364,15 @@ function setupAdminEventListeners() {
     }
 }
 
-// 显示文章表单
+// UI function to show the post form
 function showPostForm(post = null) {
     if (!adminPanel || !postForm) return;
     
     currentEditingPostId = post ? post.id : null;
     
     if (post) {
-        // 编辑模式
         formTitle.textContent = '编辑文章';
         submitBtn.textContent = '更新文章';
-        
-        // 填充表单数据
         document.getElementById('post-title').value = post.title || '';
         document.getElementById('post-excerpt').value = post.excerpt || '';
         document.getElementById('post-content').value = post.content || '';
@@ -874,7 +380,6 @@ function showPostForm(post = null) {
         document.getElementById('post-tags').value = post.tags ? post.tags.join(', ') : '';
         document.getElementById('post-read-time').value = post.readTime || 5;
     } else {
-        // 新建模式
         formTitle.textContent = '添加新文章';
         submitBtn.textContent = '发布文章';
         postForm.reset();
@@ -883,262 +388,21 @@ function showPostForm(post = null) {
     adminPanel.style.display = 'block';
 }
 
-// 隐藏文章表单
+// UI function to hide the post form
 function hidePostForm() {
     if (!adminPanel) return;
-    
     adminPanel.style.display = 'none';
     currentEditingPostId = null;
     if (postForm) postForm.reset();
 }
 
-// 处理文章表单提交
-async function handlePostSubmit(e) {
-    e.preventDefault();
-    
-    if (!db) {
-        alert('❌ 数据库未初始化');
-        return;
-    }
-    
-    const formData = new FormData(postForm);
-    
-    // 数据验证
-    const title = formData.get('title')?.trim();
-    const excerpt = formData.get('excerpt')?.trim();
-    const content = formData.get('content')?.trim();
-    const category = formData.get('category');
-    const tagsInput = formData.get('tags')?.trim() || '';
-    
-    if (!title || !excerpt || !content) {
-        alert('❌ 请填写完整的文章信息');
-        return;
-    }
-    
-    if (title.length > 100) {
-        alert('❌ 标题长度不能超过100个字符');
-        return;
-    }
-    
-    if (excerpt.length > 200) {
-        alert('❌ 摘要长度不能超过200个字符');
-        return;
-    }
-    
-    const tags = tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag && tag.length <= 20);
-    
-    const postData = {
-        title,
-        excerpt,
-        content,
-        category,
-        tags,
-        readTime: Math.max(1, parseInt(formData.get('readTime')) || Math.ceil(content.length / 200)),
-        author: '博主',
-        updatedAt: firebase.firestore.Timestamp.now()
-    };
-    
-    try {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 处理中...';
-        
-        // 添加超时处理
-        const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('操作超时')), 15000);
-        });
-        
-        if (currentEditingPostId) {
-            // 更新文章
-            const updatePromise = db.collection('posts').doc(currentEditingPostId).update(postData);
-            await Promise.race([updatePromise, timeoutPromise]);
-            console.log('✅ 文章更新成功');
-            alert('✅ 文章更新成功！');
-        } else {
-            // 创建新文章
-            postData.createdAt = firebase.firestore.Timestamp.now();
-            const addPromise = db.collection('posts').add(postData);
-            await Promise.race([addPromise, timeoutPromise]);
-            console.log('✅ 文章创建成功');
-            alert('✅ 文章发布成功！');
-        }
-        
-        hidePostForm();
-        loadPosts(true); // 重新加载文章列表
-        
-    } catch (error) {
-        console.error('❌ 文章操作失败:', error);
-        
-        let errorMessage = '❌ 操作失败，请稍后重试';
-        if (error.code === 'permission-denied') {
-            errorMessage = '❌ 权限不足，无法执行此操作';
-        } else if (error.code === 'unavailable') {
-            errorMessage = '❌ 服务暂时不可用，请稍后重试';
-        } else if (error.message === '操作超时') {
-            errorMessage = '❌ 操作超时，请检查网络连接';
-        }
-        
-        alert(errorMessage);
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = currentEditingPostId ? '更新文章' : '发布文章';
-    }
-}
-
-// 编辑文章（优化版）
-async function editPost(postId) {
-    if (!db) {
-        if (window.loadingErrorHandler) {
-            window.loadingErrorHandler.showErrorToast('数据库未初始化');
-        } else {
-            alert('❌ 数据库未初始化');
-        }
-        return;
-    }
-    
-    if (!postId) {
-        if (window.loadingErrorHandler) {
-            window.loadingErrorHandler.showErrorToast('文章ID无效');
-        } else {
-            alert('❌ 文章ID无效');
-        }
-        return;
-    }
-    
-    let loadingToast = null;
-    
-    try {
-        // 显示加载状态提示
-        if (window.loadingErrorHandler) {
-            loadingToast = window.loadingErrorHandler.showLoadingToast('正在加载文章...');
-        }
-        
-        // 添加超时处理
-        const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('加载超时')), 8000);
-        });
-        
-        const docPromise = db.collection('posts').doc(postId).get();
-        const doc = await Promise.race([docPromise, timeoutPromise]);
-        
-        // 隐藏加载提示
-        if (window.loadingErrorHandler) {
-            window.loadingErrorHandler.hideLoadingToast();
-        }
-        
-        if (doc.exists) {
-            const data = doc.data();
-            const post = {
-                id: doc.id,
-                title: data.title || '',
-                excerpt: data.excerpt || '',
-                content: data.content || '',
-                category: data.category || 'life',
-                tags: Array.isArray(data.tags) ? data.tags : [],
-                readTime: data.readTime || 5
-            };
-            showPostForm(post);
-        } else {
-            if (window.loadingErrorHandler) {
-                window.loadingErrorHandler.showErrorToast('文章不存在或已被删除');
-            } else {
-                alert('❌ 文章不存在或已被删除');
-            }
-        }
-    } catch (error) {
-        // 确保隐藏加载提示
-        if (window.loadingErrorHandler) {
-            window.loadingErrorHandler.hideLoadingToast();
-        }
-        
-        console.error('❌ 获取文章失败:', error);
-        
-        let errorMessage = '获取文章失败';
-        if (error.code === 'permission-denied') {
-            errorMessage = '权限不足，无法编辑此文章';
-        } else if (error.code === 'unavailable') {
-            errorMessage = '服务暂时不可用，请稍后重试';
-        } else if (error.message === '加载超时') {
-            errorMessage = '加载超时，请检查网络连接';
-        } else if (error.code === 'not-found') {
-            errorMessage = '文章不存在或已被删除';
-        }
-        
-        if (window.loadingErrorHandler) {
-            window.loadingErrorHandler.showErrorToast(errorMessage);
-        } else {
-            alert('❌ ' + errorMessage);
-        }
-    }
-}
-
-// 确认删除文章
-function confirmDeletePost(postId) {
-    deletePostId = postId;
+// UI function to hide the delete modal
+function hideDeleteModal() {
     if (deleteModal) {
-        deleteModal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
+        deleteModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
     }
-}
-
-// 删除文章（优化版）
-async function deletePost(postId) {
-    if (!db || !postId) {
-        alert('❌ 删除失败：数据库未初始化或文章ID无效');
-        return;
-    }
-    
-    try {
-        confirmDeleteBtn.disabled = true;
-        confirmDeleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 删除中...';
-        
-        // 添加超时处理
-        const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('删除超时')), 10000);
-        });
-        
-        // 先检查文章是否存在
-        const docRef = db.collection('posts').doc(postId);
-        const doc = await docRef.get();
-        
-        if (!doc.exists) {
-            alert('❌ 文章不存在或已被删除');
-            hideDeleteModal();
-            loadPosts(true);
-            return;
-        }
-        
-        // 执行删除操作
-        const deletePromise = docRef.delete();
-        await Promise.race([deletePromise, timeoutPromise]);
-        
-        console.log('✅ 文章删除成功');
-        alert('✅ 文章删除成功！');
-        
-        hideDeleteModal();
-        loadPosts(true); // 重新加载文章列表
-        
-    } catch (error) {
-        console.error('❌ 删除文章失败:', error);
-        
-        let errorMessage = '❌ 删除失败，请稍后重试';
-        if (error.code === 'permission-denied') {
-            errorMessage = '❌ 权限不足，无法删除此文章';
-        } else if (error.code === 'unavailable') {
-            errorMessage = '❌ 服务暂时不可用，请稍后重试';
-        } else if (error.message === '删除超时') {
-            errorMessage = '❌ 删除超时，请检查网络连接';
-        } else if (error.code === 'not-found') {
-            errorMessage = '❌ 文章不存在或已被删除';
-            hideDeleteModal();
-            loadPosts(true);
-            return;
-        }
-        
-        alert(errorMessage);
-    } finally {
-        confirmDeleteBtn.disabled = false;
-        confirmDeleteBtn.innerHTML = '<i class="fas fa-trash"></i> 确认删除';
-    }
+    deletePostId = null;
 }
 
 // 隐藏删除模态框
@@ -1269,22 +533,21 @@ function formatDate(date) {
     return d.toLocaleDateString('zh-CN');
 }
 
-// 导出函数供其他模块使用
-window.blogApp = {
-    loadPosts,
-    displayPost,
-    getCategoryName,
-    formatDate,
-    editPost,
-    confirmDeletePost,
-    deletePost
-};
+// These functions are called by the event listeners set up in displayPost
+async function editPost(postId) {
+    const post = await fetchPostForEdit(postId);
+    if (post) {
+        showPostForm(post);
+    }
+}
 
-// 将函数添加到全局作用域，供HTML中的onclick使用
-window.editPost = editPost;
-window.confirmDeletePost = confirmDeletePost;
-window.deletePost = deletePost;
-window.openPostModal = openPostModal;
+function confirmDeletePost(postId) {
+    deletePostId = postId;
+    if (deleteModal) {
+        deleteModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
 
 console.log('🚀 博客应用初始化完成');
 
@@ -2764,361 +2027,4 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(initFormSystem, 100);
 });
 
-// ========================================
-// 暗色主题切换功能
-// ========================================
-
-// 主题管理类
-class ThemeManager {
-    constructor() {
-        this.currentTheme = 'light';
-        this.themeToggle = null;
-        this.sunIcon = null;
-        this.moonIcon = null;
-        this.init();
-    }
-    
-    // 初始化主题管理器
-    init() {
-        this.createThemeToggle();
-        this.loadSavedTheme();
-        this.setupEventListeners();
-        this.applyThemeTransitions();
-        console.log('🎨 主题管理器初始化完成');
-    }
-    
-    // 创建主题切换按钮
-    createThemeToggle() {
-        // 检查是否已存在主题切换按钮
-        if (document.querySelector('.theme-toggle')) {
-            this.themeToggle = document.querySelector('.theme-toggle');
-            this.sunIcon = this.themeToggle.querySelector('.theme-icon.sun');
-            this.moonIcon = this.themeToggle.querySelector('.theme-icon.moon');
-            return;
-        }
-        
-        // 创建主题切换按钮
-        this.themeToggle = document.createElement('button');
-        this.themeToggle.className = 'theme-toggle';
-        this.themeToggle.setAttribute('aria-label', '切换主题');
-        this.themeToggle.setAttribute('title', '切换暗色/亮色主题');
-        
-        // 创建图标
-        this.sunIcon = document.createElement('i');
-        this.sunIcon.className = 'theme-icon sun fas fa-sun';
-        
-        this.moonIcon = document.createElement('i');
-        this.moonIcon.className = 'theme-icon moon fas fa-moon';
-        
-        // 添加图标到按钮
-        this.themeToggle.appendChild(this.sunIcon);
-        this.themeToggle.appendChild(this.moonIcon);
-        
-        // 添加到页面
-        document.body.appendChild(this.themeToggle);
-        
-        console.log('🌓 主题切换按钮创建成功');
-    }
-    
-    // 加载保存的主题偏好
-    loadSavedTheme() {
-        try {
-            // 优先级：localStorage > 系统偏好 > 默认亮色
-            const savedTheme = localStorage.getItem('theme');
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            
-            if (savedTheme) {
-                this.currentTheme = savedTheme;
-                console.log(`🎨 加载保存的主题: ${savedTheme}`);
-            } else if (systemPrefersDark) {
-                this.currentTheme = 'dark';
-                console.log('🎨 使用系统暗色主题偏好');
-            } else {
-                this.currentTheme = 'light';
-                console.log('🎨 使用默认亮色主题');
-            }
-            
-            this.applyTheme(this.currentTheme, false);
-            
-        } catch (error) {
-            console.warn('⚠️ 加载主题偏好失败:', error);
-            this.currentTheme = 'light';
-            this.applyTheme('light', false);
-        }
-    }
-    
-    // 设置事件监听器
-    setupEventListeners() {
-        // 主题切换按钮点击事件
-        if (this.themeToggle) {
-            this.themeToggle.addEventListener('click', () => {
-                this.toggleTheme();
-            });
-        }
-        
-        // 监听系统主题变化
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        mediaQuery.addEventListener('change', (e) => {
-            // 只有在用户没有手动设置主题时才跟随系统
-            if (!localStorage.getItem('theme')) {
-                const newTheme = e.matches ? 'dark' : 'light';
-                console.log(`🎨 系统主题变化: ${newTheme}`);
-                this.applyTheme(newTheme, true);
-            }
-        });
-        
-        // 键盘快捷键支持 (Ctrl/Cmd + Shift + D)
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'D') {
-                e.preventDefault();
-                this.toggleTheme();
-            }
-        });
-        
-        console.log('🎨 主题事件监听器设置完成');
-    }
-    
-    // 切换主题
-    toggleTheme() {
-        const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
-        this.applyTheme(newTheme, true);
-        console.log(`🎨 主题切换: ${this.currentTheme} -> ${newTheme}`);
-    }
-    
-    // 应用主题
-    applyTheme(theme, animate = true) {
-        const oldTheme = this.currentTheme;
-        this.currentTheme = theme;
-        
-        // 添加切换动画类
-        if (animate && this.themeToggle) {
-            this.themeToggle.classList.add('switching');
-            setTimeout(() => {
-                this.themeToggle.classList.remove('switching');
-            }, 500);
-        }
-        
-        // 应用主题到文档
-        if (theme === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        } else {
-            document.documentElement.removeAttribute('data-theme');
-        }
-        
-        // 保存主题偏好
-        try {
-            localStorage.setItem('theme', theme);
-        } catch (error) {
-            console.warn('⚠️ 保存主题偏好失败:', error);
-        }
-        
-        // 更新按钮状态
-        this.updateToggleButton();
-        
-        // 触发主题变化事件
-        this.dispatchThemeChangeEvent(oldTheme, theme);
-        
-        // 更新meta标签颜色
-        this.updateMetaThemeColor(theme);
-        
-        console.log(`🎨 主题应用成功: ${theme}`);
-    }
-    
-    // 更新切换按钮状态
-    updateToggleButton() {
-        if (!this.themeToggle) return;
-        
-        const isDark = this.currentTheme === 'dark';
-        
-        // 更新按钮标题
-        this.themeToggle.setAttribute('title', 
-            isDark ? '切换到亮色主题' : '切换到暗色主题'
-        );
-        
-        // 更新ARIA标签
-        this.themeToggle.setAttribute('aria-label', 
-            isDark ? '当前为暗色主题，点击切换到亮色主题' : '当前为亮色主题，点击切换到暗色主题'
-        );
-    }
-    
-    // 触发主题变化事件
-    dispatchThemeChangeEvent(oldTheme, newTheme) {
-        const event = new CustomEvent('themeChanged', {
-            detail: {
-                oldTheme,
-                newTheme,
-                timestamp: Date.now()
-            }
-        });
-        
-        window.dispatchEvent(event);
-    }
-    
-    // 更新meta标签主题颜色
-    updateMetaThemeColor(theme) {
-        let themeColorMeta = document.querySelector('meta[name="theme-color"]');
-        
-        if (!themeColorMeta) {
-            themeColorMeta = document.createElement('meta');
-            themeColorMeta.name = 'theme-color';
-            document.head.appendChild(themeColorMeta);
-        }
-        
-        // 设置主题颜色
-        const themeColors = {
-            light: '#ffffff',
-            dark: '#0f0f0f'
-        };
-        
-        themeColorMeta.content = themeColors[theme] || themeColors.light;
-    }
-    
-    // 为所有元素添加主题切换过渡动画
-    applyThemeTransitions() {
-        // 检查用户是否偏好减少动画
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        
-        if (prefersReducedMotion) {
-            console.log('🎨 用户偏好减少动画，跳过主题过渡动画');
-            return;
-        }
-        
-        // 为需要过渡的元素添加类
-        const elementsToTransition = [
-            'body',
-            '.navbar',
-            '.hero',
-            '.post-card',
-            '.btn',
-            '.form-input',
-            '.form-textarea',
-            '.form-select',
-            '.contact-info-item',
-            '.hero-stat',
-            '.hero-code-window',
-            '.back-to-top',
-            '.social-link'
-        ];
-        
-        elementsToTransition.forEach(selector => {
-            const elements = document.querySelectorAll(selector);
-            elements.forEach(element => {
-                element.classList.add('theme-transition');
-            });
-        });
-        
-        console.log('🎨 主题过渡动画应用完成');
-    }
-    
-    // 获取当前主题
-    getCurrentTheme() {
-        return this.currentTheme;
-    }
-    
-    // 检查是否为暗色主题
-    isDarkTheme() {
-        return this.currentTheme === 'dark';
-    }
-    
-    // 强制设置主题（用于外部调用）
-    setTheme(theme, animate = true) {
-        if (theme !== 'light' && theme !== 'dark') {
-            console.warn('⚠️ 无效的主题值:', theme);
-            return;
-        }
-        
-        this.applyTheme(theme, animate);
-    }
-    
-    // 重置主题到系统偏好
-    resetToSystemTheme() {
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const systemTheme = systemPrefersDark ? 'dark' : 'light';
-        
-        // 清除保存的偏好
-        try {
-            localStorage.removeItem('theme');
-        } catch (error) {
-            console.warn('⚠️ 清除主题偏好失败:', error);
-        }
-        
-        this.applyTheme(systemTheme, true);
-        console.log(`🎨 重置到系统主题: ${systemTheme}`);
-    }
-}
-
-// 全局主题管理器实例
-let themeManager = null;
-
-// 初始化主题管理器
-function initThemeManager() {
-    if (!themeManager) {
-        themeManager = new ThemeManager();
-        
-        // 将主题管理器暴露到全局作用域（用于调试和外部调用）
-        window.themeManager = themeManager;
-        
-        console.log('🎨 全局主题管理器初始化完成');
-    }
-    
-    return themeManager;
-}
-
-// 监听主题变化事件（用于其他组件响应主题变化）
-window.addEventListener('themeChanged', (event) => {
-    const { oldTheme, newTheme } = event.detail;
-    
-    // 更新图表颜色（如果有的话）
-    if (window.updateChartsTheme) {
-        window.updateChartsTheme(newTheme);
-    }
-    
-    // 更新代码高亮主题（如果有的话）
-    if (window.updateCodeHighlightTheme) {
-        window.updateCodeHighlightTheme(newTheme);
-    }
-    
-    // 更新地图主题（如果有的话）
-    if (window.updateMapTheme) {
-        window.updateMapTheme(newTheme);
-    }
-    
-    console.log(`🎨 主题变化事件处理完成: ${oldTheme} -> ${newTheme}`);
-});
-
-// 主题工具函数
-const ThemeUtils = {
-    // 获取当前主题
-    getCurrentTheme() {
-        return themeManager ? themeManager.getCurrentTheme() : 'light';
-    },
-    
-    // 检查是否为暗色主题
-    isDark() {
-        return themeManager ? themeManager.isDarkTheme() : false;
-    },
-    
-    // 切换主题
-    toggle() {
-        if (themeManager) {
-            themeManager.toggleTheme();
-        }
-    },
-    
-    // 设置主题
-    setTheme(theme) {
-        if (themeManager) {
-            themeManager.setTheme(theme);
-        }
-    },
-    
-    // 重置到系统主题
-    resetToSystem() {
-        if (themeManager) {
-            themeManager.resetToSystemTheme();
-        }
-    }
-};
-
-// 将主题工具函数暴露到全局作用域
-window.ThemeUtils = ThemeUtils;
+// The ThemeManager is now in its own module and is imported.
