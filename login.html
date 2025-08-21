@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录 | 我的个人博客</title>
+    <meta name="description" content="登录到我的个人博客，享受更多功能">
+    
+    <!-- 主题初始化脚本 - 防止主题闪烁 -->
+    <script>
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('theme');
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+                
+                if (theme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            } catch (e) {
+                // 忽略localStorage错误
+            }
+        })();
+    </script>
+    
+    <!-- 预连接到外部资源 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="css/styles.css" as="style">
+    <link rel="preload" href="css/login.css" as="style">
+    <link rel="preload" href="js/firebase-config.js" as="script">
+    <link rel="preload" href="js/auth.js" as="script">
+    <link rel="preload" href="js/login-validation.js" as="script">
+    
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/login.css">
+    
+    <!-- 字体 -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700;800&display=swap">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- 页面加载器 -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <div class="loader-text">加载中...</div>
+        </div>
+    </div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">
+                    <h2><i class="fas fa-blog"></i> 我的博客</h2>
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> 首页</a></li>
+                <li><a href="#" class="nav-link"><i class="fas fa-user"></i> 关于</a></li>
+                <li><a href="#" class="nav-link"><i class="fas fa-envelope"></i> 联系</a></li>
+                <li><button id="themeToggle" class="theme-toggle" aria-label="切换主题">
+                    <i class="fas fa-moon"></i>
+                </button></li>
+            </ul>
+            <div class="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 登录主容器 -->
+    <main class="login-main">
+        <div class="login-container">
+            <!-- 登录卡片 -->
+            <div class="login-card">
+                <!-- 登录头部 -->
+                <div class="login-header">
+                    <div class="login-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h1 class="login-title">欢迎回来</h1>
+                    <p class="login-subtitle">登录到您的账户</p>
+                </div>
+
+                <!-- 登录表单 -->
+                <form class="login-form" id="loginForm">
+                    <!-- 用户名/邮箱输入框 -->
+                    <div class="form-group">
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="form-input" 
+                            placeholder="请输入您的邮箱地址"
+                            required
+                            autocomplete="email"
+                            aria-describedby="emailError"
+                        >
+                        <div class="form-error" id="emailError"></div>
+                    </div>
+
+                    <!-- 密码输入框 -->
+                    <div class="form-group">
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                class="form-input" 
+                                placeholder="请输入您的密码"
+                                required
+                                autocomplete="current-password"
+                                aria-describedby="passwordError"
+                            >
+                            <button type="button" class="password-toggle" id="passwordToggle" aria-label="显示/隐藏密码">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="form-error" id="passwordError"></div>
+                    </div>
+
+                    <!-- 记住我和忘记密码 -->
+                    <div class="form-options">
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" id="rememberMe" name="rememberMe">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">记住我</span>
+                        </label>
+                        <a href="#" class="forgot-password" id="forgotPasswordLink">
+                            忘记密码？
+                        </a>
+                    </div>
+
+                    <!-- 登录按钮 -->
+                    <button type="submit" class="login-btn" id="loginBtn">
+                        <span class="btn-text">登录</span>
+                        <span class="btn-loader" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </span>
+                    </button>
+
+                    <!-- 错误提示 -->
+                    <div class="form-message" id="formMessage"></div>
+                </form>
+
+                <!-- 分割线 -->
+                <div class="divider">
+                    <span>或</span>
+                </div>
+
+                <!-- 社交登录 -->
+                <div class="social-login">
+                    <button type="button" class="social-btn google-btn" id="googleLoginBtn">
+                        <i class="fab fa-google"></i>
+                        <span>使用 Google 登录</span>
+                    </button>
+                </div>
+
+                <!-- 注册链接 -->
+                <div class="signup-link">
+                    <p>还没有账户？ <a href="#" id="signupLink">立即注册</a></p>
+                </div>
+            </div>
+
+            <!-- 注册卡片（隐藏状态） -->
+            <div class="login-card signup-card" id="signupCard" style="display: none;">
+                <!-- 注册头部 -->
+                <div class="login-header">
+                    <div class="login-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h1 class="login-title">创建账户</h1>
+                    <p class="login-subtitle">加入我们的社区</p>
+                </div>
+
+                <!-- 注册表单 -->
+                <form class="login-form" id="signupForm">
+                    <!-- 用户名输入框 -->
+                    <div class="form-group">
+                        <input 
+                            type="text" 
+                            id="signupName" 
+                            name="name" 
+                            class="form-input" 
+                            placeholder="请输入用户名"
+                            required
+                            autocomplete="name"
+                            aria-describedby="signupNameError"
+                        >
+                        <div class="form-error" id="signupNameError"></div>
+                    </div>
+
+                    <!-- 邮箱输入框 -->
+                    <div class="form-group">
+                        <input 
+                            type="email" 
+                            id="signupEmail" 
+                            name="email" 
+                            class="form-input" 
+                            placeholder="请输入您的邮箱地址"
+                            required
+                            autocomplete="email"
+                            aria-describedby="signupEmailError"
+                        >
+                        <div class="form-error" id="signupEmailError"></div>
+                    </div>
+
+                    <!-- 密码输入框 -->
+                    <div class="form-group">
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="signupPassword" 
+                                name="password" 
+                                class="form-input" 
+                                placeholder="请输入密码（至少6位）"
+                                required
+                                autocomplete="new-password"
+                                aria-describedby="signupPasswordError"
+                            >
+                            <button type="button" class="password-toggle" id="signupPasswordToggle" aria-label="显示/隐藏密码">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="form-error" id="signupPasswordError"></div>
+                        <div class="password-strength" id="passwordStrength"></div>
+                    </div>
+
+                    <!-- 确认密码输入框 -->
+                    <div class="form-group">
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="confirmPassword" 
+                                name="confirmPassword" 
+                                class="form-input" 
+                                placeholder="请再次输入密码"
+                                required
+                                autocomplete="new-password"
+                                aria-describedby="confirmPasswordError"
+                            >
+                            <button type="button" class="password-toggle" id="confirmPasswordToggle" aria-label="显示/隐藏密码">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="form-error" id="confirmPasswordError"></div>
+                    </div>
+
+                    <!-- 注册按钮 -->
+                    <button type="submit" class="login-btn" id="signupBtn">
+                        <span class="btn-text">注册</span>
+                        <span class="btn-loader" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </span>
+                    </button>
+
+                    <!-- 错误提示 -->
+                    <div class="form-message" id="signupFormMessage"></div>
+                </form>
+
+                <!-- 登录链接 -->
+                <div class="signup-link">
+                    <p>已有账户？ <a href="#" id="loginLink">立即登录</a></p>
+                </div>
+            </div>
+
+            <!-- 忘记密码卡片（隐藏状态） -->
+            <div class="login-card forgot-card" id="forgotCard" style="display: none;">
+                <!-- 忘记密码头部 -->
+                <div class="login-header">
+                    <div class="login-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <h1 class="login-title">重置密码</h1>
+                    <p class="login-subtitle">输入您的邮箱地址，我们将发送重置链接</p>
+                </div>
+
+                <!-- 忘记密码表单 -->
+                <form class="login-form" id="forgotForm">
+                    <!-- 邮箱输入框 -->
+                    <div class="form-group">
+                        <label for="forgotEmail" class="form-label">
+                            <i class="fas fa-envelope"></i>
+                            邮箱地址
+                        </label>
+                        <input 
+                            type="email" 
+                            id="forgotEmail" 
+                            name="email" 
+                            class="form-input" 
+                            placeholder="请输入您的邮箱地址"
+                            required
+                            autocomplete="email"
+                            aria-describedby="forgotEmailError"
+                        >
+                        <div class="form-error" id="forgotEmailError"></div>
+                    </div>
+
+                    <!-- 发送重置链接按钮 -->
+                    <button type="submit" class="login-btn" id="forgotBtn">
+                        <span class="btn-text">发送重置链接</span>
+                        <span class="btn-loader" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </span>
+                    </button>
+
+                    <!-- 错误提示 -->
+                    <div class="form-message" id="forgotFormMessage"></div>
+                </form>
+
+                <!-- 返回登录链接 -->
+                <div class="signup-link">
+                    <p><a href="#" id="backToLoginLink">返回登录</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore-compat.js"></script>
+    
+    <!-- 项目脚本 -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/login-validation.js"></script>
+    <script src="js/auth.js"></script>
+    
+    <!-- 主题切换脚本 -->
+    <script>
+        // 主题切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = themeToggle.querySelector('i');
+            
+            // 更新主题图标
+            function updateThemeIcon() {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                themeIcon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            }
+            
+            // 切换主题
+            themeToggle.addEventListener('click', function() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon();
+            });
+            
+            // 初始化主题图标
+            updateThemeIcon();
+            
+            // 隐藏页面加载器
+            setTimeout(() => {
+                document.getElementById('pageLoader').classList.add('hidden');
+            }, 500);
+        });
+    </script>
+</body>
+</html>

@@ -170,6 +170,7 @@ let currentUser = null;
 let lastVisible = null;
 let isLoading = false;
 let currentCategory = 'all';
+let currentAuthor = 'all'; // 当前选择的作者筛选
 const postsPerPage = 6;
 // Firebase服务变量
 let db = null;
@@ -206,6 +207,7 @@ function waitForFirebase() {
 const postsContainer = document.getElementById('posts-container');
 const loadMoreBtn = document.getElementById('load-more-btn');
 const filterBtns = document.querySelectorAll('.filter-btn');
+const authorFilter = document.getElementById('author-filter'); // 作者筛选下拉框
 const contactForm = document.getElementById('contact-form');
 const backToTopBtn = document.getElementById('back-to-top');
 const mobileMenu = document.getElementById('mobile-menu');
@@ -280,12 +282,45 @@ async function initializeApp() {
                 auth: !!auth,
                 analytics: !!analytics
             });
+            
+            // 使用AuthManager的认证状态监听器
+            console.log('🔍 检查AuthManager:', !!window.authManager);
+            if (window.authManager) {
+                window.authManager.addAuthStateListener((user) => {
+                    currentUser = user;
+                    updateUIPermissions(); // 更新UI权限
+                    // 重新加载文章以更新按钮显示
+                    if (postsContainer && postsContainer.children.length > 0) {
+                        loadPosts(true); // 重新加载文章列表以更新权限显示
+                    }
+                    console.log('🔄 用户状态变化:', user ? '已登录' : '未登录');
+                    console.log('🔍 当前用户信息:', user ? { uid: user.uid, email: user.email } : null);
+                });
+                console.log('✅ AuthManager监听器已设置');
+            } else {
+                console.error('❌ AuthManager未找到，回退到直接监听auth');
+                // 回退方案：直接监听auth
+                if (auth) {
+                    auth.onAuthStateChanged((user) => {
+                        currentUser = user;
+                        updateUIPermissions();
+                        // 重新加载文章以更新按钮显示
+                        if (postsContainer && postsContainer.children.length > 0) {
+                            loadPosts(true); // 重新加载文章列表以更新权限显示
+                        }
+                        console.log('🔄 用户状态变化(回退):', user ? '已登录' : '未登录');
+                        console.log('🔍 当前用户信息(回退):', user ? { uid: user.uid, email: user.email } : null);
+                    });
+                }
+            }
         }
         
         // 尝试连接Firestore
         if (db) {
             try {
                 await loadPosts(true);
+                await loadAuthors(); // 加载作者列表
+                updateUIPermissions(); // 初始化UI权限状态
             } catch (firestoreError) {
                 console.warn('⚠️ Firestore连接失败:', firestoreError.message);
                 
@@ -337,6 +372,52 @@ async function initializeApp() {
 
 
 
+// 加载作者列表到筛选下拉框
+async function loadAuthors() {
+    if (!db || !authorFilter) return;
+    
+    try {
+        console.log('👥 开始加载作者列表...');
+        
+        // 获取所有文章的作者信息
+        const postsRef = db.collection('posts');
+        const snapshot = await postsRef.get();
+        
+        // 使用Set来去重作者
+        const authorsSet = new Set();
+        
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.authorId && data.authorDisplayName) {
+                // 存储作者ID和显示名称的组合
+                authorsSet.add(JSON.stringify({
+                    id: data.authorId,
+                    name: data.authorDisplayName || data.authorEmail || '匿名用户'
+                }));
+            }
+        });
+        
+        // 清空现有选项（保留"所有作者"选项）
+        authorFilter.innerHTML = '<option value="all">所有作者</option>';
+        
+        // 添加作者选项
+        const authorsArray = Array.from(authorsSet).map(authorStr => JSON.parse(authorStr));
+        authorsArray.sort((a, b) => a.name.localeCompare(b.name)); // 按名称排序
+        
+        authorsArray.forEach(author => {
+            const option = document.createElement('option');
+            option.value = author.id;
+            option.textContent = author.name;
+            authorFilter.appendChild(option);
+        });
+        
+        console.log(`👥 成功加载 ${authorsArray.length} 位作者`);
+        
+    } catch (error) {
+        console.error('❌ 加载作者列表失败:', error);
+    }
+}
+
 // 加载文章（优化版）
 async function loadPosts(reset = false) {
     if (isLoading) return;
@@ -365,13 +446,29 @@ async function loadPosts(reset = false) {
         let q;
         
         // 构建查询（添加索引优化）
-        if (currentCategory === 'all') {
+        // 根据分类和作者筛选条件构建查询
+        if (currentCategory === 'all' && currentAuthor === 'all') {
+            // 显示所有文章
             q = postsRef
                 .orderBy('createdAt', 'desc')
                 .limit(postsPerPage);
-        } else {
+        } else if (currentCategory !== 'all' && currentAuthor === 'all') {
+            // 只按分类筛选
             q = postsRef
                 .where('category', '==', currentCategory)
+                .orderBy('createdAt', 'desc')
+                .limit(postsPerPage);
+        } else if (currentCategory === 'all' && currentAuthor !== 'all') {
+            // 只按作者筛选
+            q = postsRef
+                .where('authorId', '==', currentAuthor)
+                .orderBy('createdAt', 'desc')
+                .limit(postsPerPage);
+        } else {
+            // 同时按分类和作者筛选
+            q = postsRef
+                .where('category', '==', currentCategory)
+                .where('authorId', '==', currentAuthor)
                 .orderBy('createdAt', 'desc')
                 .limit(postsPerPage);
         }
@@ -422,12 +519,15 @@ async function loadPosts(reset = false) {
                 content: data.content || '',
                 category: data.category || 'life',
                 author: data.author || '博主',
+                authorId: data.authorId || '', // 确保包含authorId字段
                 createdAt: data.createdAt,
                 tags: Array.isArray(data.tags) ? data.tags : [],
                 readTime: data.readTime || 5
             };
             posts.push(post);
         });
+        
+        console.log('📋 文章数据处理完成，包含authorId字段:', posts.map(p => ({ id: p.id, authorId: p.authorId })));
         
         // 批量渲染文章
         posts.forEach(post => displayPost(post));
@@ -496,7 +596,57 @@ async function loadPosts(reset = false) {
 function displayPost(post) {
     const postElement = document.createElement('div');
     postElement.className = 'post-card fade-in-up';
-    postElement.innerHTML = `
+    
+    // 增强权限检查逻辑 - 添加详细调试信息和多重验证
+    const hasCurrentUser = !!currentUser;
+    const hasAuthorId = !!post.authorId;
+    const userUid = currentUser?.uid;
+    const authorId = post.authorId;
+    
+    // 多重验证：检查全局currentUser和auth.currentUser
+    const authCurrentUser = auth?.currentUser;
+    const authUserUid = authCurrentUser?.uid;
+    
+    // 权限判断：优先使用全局currentUser，回退到auth.currentUser
+    const effectiveUser = currentUser || authCurrentUser;
+    const effectiveUid = userUid || authUserUid;
+    const isAuthor = effectiveUser && hasAuthorId && effectiveUid === authorId;
+    
+    // 强制检查：如果没有有效用户但auth中有用户，更新全局currentUser
+    if (!currentUser && authCurrentUser) {
+        console.log('🔄 检测到用户状态不同步，正在更新全局currentUser');
+        window.currentUser = authCurrentUser;
+    }
+    
+    // 详细的调试日志
+    console.log('🔍 权限检查详情:', {
+        hasCurrentUser,
+        hasAuthorId,
+        userUid,
+        authUserUid,
+        effectiveUid,
+        authorId,
+        isAuthor,
+        postTitle: post.title,
+        currentUserEmail: currentUser?.email,
+        authUserEmail: authCurrentUser?.email
+    });
+    
+    // 如果没有用户登录或没有作者ID，记录警告
+    if (!effectiveUser) {
+        console.warn('⚠️ 用户未登录，无法显示编辑/删除按钮');
+    }
+    if (!hasAuthorId) {
+        console.warn('⚠️ 文章缺少作者ID，无法进行权限检查:', post.title);
+    }
+    
+    // 如果用户已登录但不是作者，添加友好提示
+    if (effectiveUser && hasAuthorId && !isAuthor) {
+        console.log('ℹ️ 当前用户不是文章作者，无编辑权限');
+    }
+    
+    // 只有作者才显示编辑和删除按钮
+    const actionButtons = isAuthor ? `
         <div class="post-actions">
             <button class="action-btn edit" onclick="editPost('${post.id}')" title="编辑文章">
                 <i class="fas fa-edit"></i>
@@ -505,6 +655,13 @@ function displayPost(post) {
                 <i class="fas fa-trash"></i>
             </button>
         </div>
+    ` : '';
+    
+    // 显示作者信息 - 优先使用authorDisplayName，然后是author字段，最后是email前缀
+    const authorInfo = post.authorDisplayName || post.author || (post.authorEmail ? post.authorEmail.split('@')[0] : '匿名用户');
+    
+    postElement.innerHTML = `
+        ${actionButtons}
         <div class="post-image">
             <i class="fas ${getCategoryIcon(post.category)}"></i>
         </div>
@@ -513,6 +670,7 @@ function displayPost(post) {
             <h3 class="post-title">${post.title}</h3>
             <p class="post-excerpt">${post.excerpt}</p>
             <div class="post-meta">
+                <span><i class="fas fa-user"></i> ${authorInfo}</span>
                 <span><i class="fas fa-clock"></i> ${post.readTime || 5} 分钟阅读</span>
                 <span><i class="fas fa-calendar"></i> ${formatDate(post.createdAt)}</span>
             </div>
@@ -551,6 +709,7 @@ function openPostModal(post) {
             <div class="modal-body">
                 <div class="post-meta">
                     <span class="post-category">${getCategoryName(post.category)}</span>
+                    <span><i class="fas fa-user"></i> ${post.authorDisplayName || post.author || (post.authorEmail ? post.authorEmail.split('@')[0] : '匿名用户')}</span>
                     <span><i class="fas fa-clock"></i> ${post.readTime || 5} 分钟阅读</span>
                     <span><i class="fas fa-calendar"></i> ${formatDate(post.createdAt)}</span>
                 </div>
@@ -640,6 +799,14 @@ function setupEventListeners() {
             loadPosts(true);
         });
     });
+    
+    // 作者筛选器
+    if (authorFilter) {
+        authorFilter.addEventListener('change', () => {
+            currentAuthor = authorFilter.value;
+            loadPosts(true);
+        });
+    }
     
     // 加载更多按钮
     loadMoreBtn.addEventListener('click', () => {
@@ -784,6 +951,23 @@ async function handleContactForm(e) {
     }
 }
 
+// 更新UI权限控制
+function updateUIPermissions() {
+    // 根据用户登录状态控制添加文章按钮的显示
+    if (addPostBtn) {
+        const user = auth?.currentUser;
+        if (user) {
+            // 用户已登录，显示添加文章按钮
+            addPostBtn.style.display = 'inline-flex';
+            console.log('👤 用户已登录，显示添加文章按钮:', user.email);
+        } else {
+            // 用户未登录，隐藏添加文章按钮
+            addPostBtn.style.display = 'none';
+            console.log('🚫 用户未登录，隐藏添加文章按钮');
+        }
+    }
+}
+
 // 设置管理员事件监听器
 function setupAdminEventListeners() {
     // 添加文章按钮
@@ -908,6 +1092,18 @@ async function handlePostSubmit(e) {
     
     const tags = tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag && tag.length <= 20);
     
+    // 获取当前登录用户信息 - 使用全局currentUser变量
+    console.log('🔍 调试信息 - currentUser:', currentUser);
+    console.log('🔍 调试信息 - auth?.currentUser:', auth?.currentUser);
+    console.log('🔍 详细调试 - displayName:', currentUser?.displayName);
+    console.log('🔍 详细调试 - email:', currentUser?.email);
+    console.log('🔍 详细调试 - uid:', currentUser?.uid);
+    
+    if (!currentUser) {
+        alert('❌ 请先登录后再发布文章');
+        return;
+    }
+
     const postData = {
         title,
         excerpt,
@@ -915,7 +1111,11 @@ async function handlePostSubmit(e) {
         category,
         tags,
         readTime: Math.max(1, parseInt(formData.get('readTime')) || Math.ceil(content.length / 200)),
-        author: '博主',
+        // 作者信息字段
+        authorId: currentUser.uid,
+        authorEmail: currentUser.email,
+        authorDisplayName: currentUser.displayName || currentUser.email?.split('@')[0] || '匿名用户',
+        author: currentUser.displayName || currentUser.email?.split('@')[0] || '匿名用户', // 保持向后兼容
         updatedAt: firebase.firestore.Timestamp.now()
     };
     
@@ -984,6 +1184,30 @@ async function editPost(postId) {
         }
         return;
     }
+
+    // 多重验证用户登录状态
+    const globalCurrentUser = currentUser;
+    const authCurrentUser = auth?.currentUser;
+    const effectiveUser = globalCurrentUser || authCurrentUser;
+    
+    // 强制同步用户状态
+    if (!currentUser && authCurrentUser) {
+        console.log('🔄 editPost: 同步用户状态');
+        window.currentUser = authCurrentUser;
+    }
+    
+    console.log('🔍 editPost权限检查:', {
+        hasGlobalUser: !!globalCurrentUser,
+        hasAuthUser: !!authCurrentUser,
+        effectiveUser: !!effectiveUser,
+        globalUserEmail: globalCurrentUser?.email,
+        authUserEmail: authCurrentUser?.email
+    });
+    
+    if (!effectiveUser) {
+        alert('❌ 请先登录后再编辑文章');
+        return;
+    }
     
     let loadingToast = null;
     
@@ -1008,6 +1232,24 @@ async function editPost(postId) {
         
         if (doc.exists) {
             const data = doc.data();
+            
+            // 检查权限：只有作者才能编辑自己的文章
+            console.log('🔍 editPost文章权限验证:', {
+                articleAuthorId: data.authorId,
+                effectiveUserUid: effectiveUser.uid,
+                isAuthor: data.authorId === effectiveUser.uid,
+                articleTitle: data.title
+            });
+            
+            if (data.authorId && data.authorId !== effectiveUser.uid) {
+                if (window.loadingErrorHandler) {
+                    window.loadingErrorHandler.showErrorToast('❌ 您只能编辑自己创建的文章');
+                } else {
+                    alert('❌ 您只能编辑自己创建的文章');
+                }
+                return;
+            }
+            
             const post = {
                 id: doc.id,
                 title: data.title || '',
@@ -1054,6 +1296,16 @@ async function editPost(postId) {
 
 // 确认删除文章
 function confirmDeletePost(postId) {
+    // 检查用户登录状态
+    if (!currentUser) {
+        if (window.loadingErrorHandler) {
+            window.loadingErrorHandler.showErrorToast('请先登录后再删除文章');
+        } else {
+            alert('❌ 请先登录后再删除文章');
+        }
+        return;
+    }
+    
     deletePostId = postId;
     if (deleteModal) {
         deleteModal.style.display = 'flex';
@@ -1085,6 +1337,40 @@ async function deletePost(postId) {
             alert('❌ 文章不存在或已被删除');
             hideDeleteModal();
             loadPosts(true);
+            return;
+        }
+        
+        // 检查权限：只有作者才能删除自己的文章
+        const data = doc.data();
+        const globalCurrentUser = currentUser;
+        const authCurrentUser = auth?.currentUser;
+        const effectiveUser = globalCurrentUser || authCurrentUser;
+        
+        // 强制同步用户状态
+        if (!currentUser && authCurrentUser) {
+            console.log('🔄 deletePost: 同步用户状态');
+            window.currentUser = authCurrentUser;
+        }
+        
+        console.log('🔍 deletePost权限检查:', {
+            hasGlobalUser: !!globalCurrentUser,
+            hasAuthUser: !!authCurrentUser,
+            effectiveUser: !!effectiveUser,
+            articleAuthorId: data.authorId,
+            effectiveUserUid: effectiveUser?.uid,
+            isAuthor: data.authorId === effectiveUser?.uid,
+            articleTitle: data.title
+        });
+        
+        if (!effectiveUser) {
+            alert('❌ 请先登录后再删除文章');
+            hideDeleteModal();
+            return;
+        }
+        
+        if (data.authorId && data.authorId !== effectiveUser.uid) {
+            alert('❌ 您只能删除自己创建的文章');
+            hideDeleteModal();
             return;
         }
         
@@ -1131,12 +1417,34 @@ function hideDeleteModal() {
     deletePostId = null;
 }
 
-// 设置导航
+/**
+ * 设置导航功能
+ * 修复说明：解决登录链接无法跳转的问题
+ * 
+ * 问题原因：之前对所有.nav-link都执行preventDefault()，阻止了外部链接的默认跳转行为
+ * 解决方案：只对页面内锚点链接（以#开头）执行preventDefault()和平滑滚动，
+ *          对外部链接（如login.html）保持默认跳转行为
+ * 
+ * 功能说明：
+ * 1. 页面内导航：对#home、#posts、#about等锚点链接进行平滑滚动
+ * 2. 外部链接：对login.html等页面链接保持正常跳转
+ * 3. 移动端适配：自动关闭移动端菜单
+ */
 function setupNavigation() {
     const navLinks = document.querySelectorAll('.nav-link');
     
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
+            const href = link.getAttribute('href');
+            
+            // 检查是否为外部链接或页面链接（如login.html）
+            // 如果href不是以#开头的锚点链接，则允许默认行为
+            if (!href || !href.startsWith('#')) {
+                // 对于外部链接（如login.html），不阻止默认行为，直接返回
+                return;
+            }
+            
+            // 只对页面内锚点链接进行preventDefault和平滑滚动处理
             e.preventDefault();
             
             // 移除所有active类
@@ -1145,7 +1453,7 @@ function setupNavigation() {
             link.classList.add('active');
             
             // 滚动到目标部分
-            const targetId = link.getAttribute('href').substring(1);
+            const targetId = href.substring(1);
             const targetElement = document.getElementById(targetId);
             
             if (targetElement) {

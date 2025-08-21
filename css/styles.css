@@ -3779,9 +3779,25 @@ html {
 .posts-filter {
     display: flex;
     justify-content: center;
-    gap: 1rem;
+    gap: 2rem;
     margin-bottom: 3rem;
     flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    margin-right: 0.5rem;
+    white-space: nowrap;
 }
 
 .filter-btn {
@@ -3800,6 +3816,32 @@ html {
     background: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
+}
+
+/* 作者筛选下拉框样式 */
+.author-filter {
+    padding: 8px 16px;
+    border: 2px solid var(--border-color);
+    background: white;
+    color: var(--text-secondary);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 500;
+    min-width: 120px;
+    outline: none;
+}
+
+.author-filter:hover,
+.author-filter:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+}
+
+.author-filter option {
+    padding: 8px;
+    background: white;
+    color: var(--text-primary);
 }
 
 /* ========================================

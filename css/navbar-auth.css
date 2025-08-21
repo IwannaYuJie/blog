@@ -1,0 +1,495 @@
+/**
+ * 导航栏认证和主题切换样式
+ * 为导航栏中的用户认证区域和主题切换按钮提供现代化样式
+ * 支持亮色/暗色主题，响应式设计和流畅动画
+ */
+
+/* 主题切换按钮样式 */
+.theme-toggle {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(192, 38, 211, 0.1));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--duration-300) var(--ease-out);
+    overflow: hidden;
+}
+
+.theme-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(192, 38, 211, 0.2));
+}
+
+.theme-toggle:active {
+    transform: translateY(0);
+    transition-duration: 100ms;
+}
+
+/* 主题图标样式 */
+.theme-icon-light,
+.theme-icon-dark {
+    position: absolute;
+    font-size: 1.1rem;
+    transition: all var(--duration-300) var(--ease-out);
+    color: var(--color-text-primary);
+}
+
+.theme-icon-light {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+.theme-icon-dark {
+    opacity: 0;
+    transform: rotate(180deg) scale(0.5);
+}
+
+/* 暗色主题下的图标切换 */
+[data-theme="dark"] .theme-icon-light {
+    opacity: 0;
+    transform: rotate(-180deg) scale(0.5);
+}
+
+[data-theme="dark"] .theme-icon-dark {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+/* 用户认证区域样式 */
+.nav-auth {
+    position: relative;
+    margin-left: var(--space-4);
+}
+
+.auth-guest .login-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    background: linear-gradient(135deg, var(--primary-600), var(--secondary-600));
+    color: white;
+    border-radius: var(--radius-xl);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--duration-300) var(--ease-out);
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+}
+
+.auth-guest .login-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+    background: linear-gradient(135deg, var(--primary-700), var(--secondary-600));
+}
+
+.auth-guest .login-link i {
+    font-size: 0.9rem;
+}
+
+/* 用户下拉菜单样式 */
+.user-dropdown {
+    position: relative;
+}
+
+.user-avatar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    transition: all var(--duration-300) var(--ease-out);
+    color: var(--color-text-primary);
+    font-weight: 500;
+    min-width: 120px;
+}
+
+.user-avatar:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.user-avatar-placeholder,
+.user-info-avatar-placeholder {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--primary-600), var(--secondary-600));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.user-avatar img,
+.user-info-avatar img {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.user-name {
+    flex: 1;
+    text-align: left;
+    font-size: 0.9rem;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dropdown-arrow {
+    font-size: 0.7rem;
+    transition: transform var(--duration-300) var(--ease-out);
+    opacity: 0.7;
+}
+
+.user-dropdown.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* 下拉菜单内容 */
+.user-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 280px;
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px) scale(0.95);
+    transition: all var(--duration-300) var(--ease-out);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.user-dropdown.active .user-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* 用户信息区域 */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(192, 38, 211, 0.05));
+}
+
+.user-info-avatar {
+    position: relative;
+}
+
+.user-info-avatar-placeholder {
+    width: 48px;
+    height: 48px;
+    font-size: 1.2rem;
+}
+
+.user-info-avatar img {
+    width: 48px;
+    height: 48px;
+}
+
+.user-info-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-info-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--color-text-primary);
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-info-email {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 下拉菜单分隔线 */
+.dropdown-divider {
+    height: 1px;
+    background: var(--color-border);
+    margin: var(--space-2) 0;
+}
+
+/* 下拉菜单项 */
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    padding: var(--space-3) var(--space-5);
+    color: var(--color-text-primary);
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all var(--duration-200) var(--ease-out);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: left;
+}
+
+.dropdown-item:hover {
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--primary-600);
+}
+
+.dropdown-item i {
+    width: 16px;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.logout-btn {
+    color: #dc2626;
+}
+
+.logout-btn:hover {
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+}
+
+/* 暗色主题适配 */
+[data-theme="dark"] .theme-toggle {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(192, 38, 211, 0.2));
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.3), rgba(192, 38, 211, 0.3));
+    box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+}
+
+[data-theme="dark"] .user-avatar {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .user-avatar:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .user-dropdown-menu {
+    background: var(--color-bg-primary);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .user-info {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(192, 38, 211, 0.1));
+}
+
+[data-theme="dark"] .dropdown-divider {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+    background: rgba(79, 70, 229, 0.2);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .nav-auth {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .auth-guest .login-link {
+        justify-content: center;
+        width: 100%;
+        margin-top: var(--space-4);
+    }
+    
+    .user-avatar {
+        justify-content: center;
+        width: 100%;
+        margin-top: var(--space-4);
+    }
+    
+    .user-dropdown-menu {
+        position: fixed;
+        top: auto;
+        bottom: 80px;
+        left: var(--space-4);
+        right: var(--space-4);
+        width: auto;
+        min-width: auto;
+    }
+    
+    .theme-toggle {
+        margin-top: var(--space-4);
+    }
+}
+
+@media (max-width: 480px) {
+    .user-dropdown-menu {
+        left: var(--space-2);
+        right: var(--space-2);
+        bottom: 70px;
+    }
+    
+    .user-info {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--space-3);
+    }
+    
+    .user-name {
+        max-width: none;
+        text-align: center;
+    }
+}
+
+/* 加载状态动画 */
+.auth-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.auth-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid transparent;
+    border-top: 2px solid var(--primary-600);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 在线状态指示器 */
+.user-status {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #10b981;
+    border: 2px solid var(--color-bg-primary);
+    box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.3);
+}
+
+.user-status.offline {
+    background: #6b7280;
+    box-shadow: 0 0 0 1px rgba(107, 114, 128, 0.3);
+}
+
+/* 通知徽章 */
+.notification-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    background: #ef4444;
+    color: white;
+    border-radius: 9px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid var(--color-bg-primary);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* 无障碍访问增强 */
+.theme-toggle:focus,
+.user-avatar:focus,
+.dropdown-item:focus {
+    outline: 2px solid var(--primary-600);
+    outline-offset: 2px;
+}
+
+/* 减少动画（用户偏好） */
+@media (prefers-reduced-motion: reduce) {
+    .theme-toggle,
+    .user-avatar,
+    .user-dropdown-menu,
+    .dropdown-item,
+    .theme-icon-light,
+    .theme-icon-dark,
+    .dropdown-arrow {
+        transition: none;
+    }
+    
+    .notification-badge {
+        animation: none;
+    }
+    
+    .auth-loading::after {
+        animation: none;
+    }
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+    .theme-toggle,
+    .user-avatar {
+        border-width: 2px;
+        border-color: var(--color-text-primary);
+    }
+    
+    .user-dropdown-menu {
+        border-width: 2px;
+        border-color: var(--color-text-primary);
+    }
+    
+    .dropdown-item:hover {
+        background: var(--color-text-primary);
+        color: var(--color-bg-primary);
+    }
+}
