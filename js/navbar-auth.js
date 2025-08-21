@@ -40,9 +40,9 @@ class NavbarAuthManager {
             this.bindEvents();
             this.initializeTheme();
             this.isInitialized = true;
-            console.log('🎉 导航栏认证管理器初始化成功');
+            // console.log('🎉 导航栏认证管理器初始化成功');
         } catch (error) {
-            console.error('❌ 导航栏认证管理器初始化失败:', error);
+            // console.error('❌ 导航栏认证管理器初始化失败:', error);
         }
     }
     
@@ -97,11 +97,11 @@ class NavbarAuthManager {
         
         // 验证关键元素是否存在
         if (!this.elements.themeToggle) {
-            console.warn('⚠️ 主题切换按钮未找到');
+            // console.warn('⚠️ 主题切换按钮未找到');
         }
         
         if (!this.elements.authGuest || !this.elements.authUser) {
-            console.warn('⚠️ 认证区域元素未找到');
+            // console.warn('⚠️ 认证区域元素未找到');
         }
     }
     
@@ -119,14 +119,14 @@ class NavbarAuthManager {
                     this.handleAuthStateChange(user);
                 });
                 
-                console.log('✅ 认证管理器初始化成功');
+                // console.log('✅ 认证管理器初始化成功');
             } else {
-                console.warn('⚠️ AuthManager未加载，将在稍后重试');
+                // console.warn('⚠️ AuthManager未加载，将在稍后重试');
                 // 延迟重试
                 setTimeout(() => this.initializeAuth(), 1000);
             }
         } catch (error) {
-            console.error('❌ 认证管理器初始化失败:', error);
+            // console.error('❌ 认证管理器初始化失败:', error);
         }
     }
     
@@ -218,7 +218,7 @@ class NavbarAuthManager {
         // 更新用户信息
         this.updateUserInfo(user);
         
-        console.log('👤 用户已登录:', user.email);
+        // console.log('👤 用户已登录:', user.email);
     }
     
     /**
@@ -234,7 +234,7 @@ class NavbarAuthManager {
         // 关闭下拉菜单
         this.closeUserDropdown();
         
-        console.log('👋 用户已退出登录');
+        // console.log('👋 用户已退出登录');
     }
     
     /**
@@ -332,7 +332,7 @@ class NavbarAuthManager {
             this.elements.themeToggle.setAttribute('aria-label', label);
         }
         
-        console.log(`🎨 主题已切换到: ${theme}`);
+        // // console.log(`🎨 主题已切换到: ${theme}`);
     }
     
     /**
@@ -379,7 +379,7 @@ class NavbarAuthManager {
      */
     async handleLogout() {
         if (!this.authManager) {
-            console.error('❌ 认证管理器未初始化');
+            // console.error('❌ 认证管理器未初始化');
             return;
         }
         
@@ -396,10 +396,10 @@ class NavbarAuthManager {
             // 关闭下拉菜单
             this.closeUserDropdown();
             
-            console.log('👋 用户已成功退出登录');
+            // // console.log('👋 用户已成功退出登录');
             
         } catch (error) {
-            console.error('❌ 退出登录失败:', error);
+            // console.error('❌ 退出登录失败:', error);
             
             // 显示错误提示
             this.showMessage('退出登录失败，请重试', 'error');
@@ -493,7 +493,7 @@ class NavbarAuthManager {
         this.elements = {};
         this.isInitialized = false;
         
-        console.log('🧹 导航栏认证管理器已销毁');
+        // // console.log('🧹 导航栏认证管理器已销毁');
     }
 }
 

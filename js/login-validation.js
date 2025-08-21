@@ -69,7 +69,7 @@ class FormValidator {
             this.setupFormValidation(form);
         });
 
-        console.log('✅ 表单验证初始化完成');
+        // // console.log('✅ 表单验证初始化完成');
     }
 
     /**
@@ -150,7 +150,7 @@ class FormValidator {
         const rules = this.validationRules[fieldName];
         
         if (!rules) {
-            console.warn(`⚠️ 未找到字段 ${fieldName} 的验证规则`);
+            // // console.warn(`⚠️ 未找到字段 ${fieldName} 的验证规则`);
             return true;
         }
 
@@ -750,7 +750,7 @@ document.addEventListener('DOMContentLoaded', function() {
         new PasswordStrengthIndicator(passwordInput, strengthIndicator);
     }
 
-    console.log('🔍 表单验证模块初始化完成');
+    // // console.log('🔍 表单验证模块初始化完成');
 });
 
 // 导出给其他模块使用

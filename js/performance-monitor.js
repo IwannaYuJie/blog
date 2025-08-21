@@ -47,7 +47,7 @@
         
         // 初始化性能监控
         init() {
-            console.log('初始化性能监控...');
+            // console.log('初始化性能监控...');
             
             // 1. 设置性能观察器
             this.setupPerformanceObservers();
@@ -68,7 +68,7 @@
         // 设置性能观察器
         setupPerformanceObservers() {
             if (!('PerformanceObserver' in window)) {
-                console.warn('PerformanceObserver不支持');
+                // console.warn('PerformanceObserver不支持');
                 return;
             }
             
@@ -86,7 +86,7 @@
                 });
                 this.observers.paint.observe({ entryTypes: ['paint'] });
             } catch (e) {
-                console.warn('Paint观察器设置失败:', e);
+                // console.warn('Paint观察器设置失败:', e);
             }
             
             // LCP观察器
@@ -98,7 +98,7 @@
                 });
                 this.observers.lcp.observe({ entryTypes: ['largest-contentful-paint'] });
             } catch (e) {
-                console.warn('LCP观察器设置失败:', e);
+                // console.warn('LCP观察器设置失败:', e);
             }
             
             // FID观察器
@@ -111,7 +111,7 @@
                 });
                 this.observers.fid.observe({ entryTypes: ['first-input'] });
             } catch (e) {
-                console.warn('FID观察器设置失败:', e);
+                // console.warn('FID观察器设置失败:', e);
             }
             
             // CLS观察器
@@ -126,7 +126,7 @@
                 });
                 this.observers.cls.observe({ entryTypes: ['layout-shift'] });
             } catch (e) {
-                console.warn('CLS观察器设置失败:', e);
+                // console.warn('CLS观察器设置失败:', e);
             }
             
             // 资源观察器
@@ -137,7 +137,7 @@
                 });
                 this.observers.resource.observe({ entryTypes: ['resource'] });
             } catch (e) {
-                console.warn('资源观察器设置失败:', e);
+                // console.warn('资源观察器设置失败:', e);
             }
         },
         
@@ -182,17 +182,17 @@
             entries.forEach(entry => {
                 // 分析慢加载资源
                 if (entry.duration > 1000) {
-                    console.warn(`慢加载资源: ${entry.name} - ${entry.duration.toFixed(2)}ms`);
+                    // console.warn(`慢加载资源: ${entry.name} - ${entry.duration.toFixed(2)}ms`);
                 }
                 
                 // 分析大文件
                 if (entry.transferSize > 500000) { // 500KB
-                    console.warn(`大文件: ${entry.name} - ${(entry.transferSize / 1024).toFixed(2)}KB`);
+                    // console.warn(`大文件: ${entry.name} - ${(entry.transferSize / 1024).toFixed(2)}KB`);
                 }
                 
                 // 分析缓存命中率
                 if (entry.transferSize === 0 && entry.decodedBodySize > 0) {
-                    console.log(`缓存命中: ${entry.name}`);
+                    // console.log(`缓存命中: ${entry.name}`);
                 }
             });
         },
@@ -201,25 +201,25 @@
         monitorResourceLoading() {
             // 监控CSS加载
             document.addEventListener('cssLoaded', (event) => {
-                console.log(`CSS加载完成: ${event.detail.href}`);
+                // console.log(`CSS加载完成: ${event.detail.href}`);
             });
             
             document.addEventListener('cssError', (event) => {
-                console.error(`CSS加载失败: ${event.detail.href}`);
+                // console.error(`CSS加载失败: ${event.detail.href}`);
             });
             
             // 监控图片加载
             document.addEventListener('imageLoaded', (event) => {
-                console.log(`图片加载完成: ${event.detail.src}`);
+                // console.log(`图片加载完成: ${event.detail.src}`);
             });
             
             document.addEventListener('imageError', (event) => {
-                console.error(`图片加载失败: ${event.detail.img.src}`);
+                // console.error(`图片加载失败: ${event.detail.img.src}`);
             });
             
             // 监控字体加载
             document.addEventListener('fontsloaded', (event) => {
-                console.log('字体加载完成');
+                // console.log('字体加载完成');
                 this.metrics.fontsPreloaded = true;
             });
         },
@@ -235,7 +235,7 @@
                     if (firstInteraction) {
                         firstInteraction = false;
                         this.metrics.timeToInteractive = performance.now();
-                        console.log(`首次交互时间: ${this.metrics.timeToInteractive.toFixed(2)}ms`);
+                        // console.log(`首次交互时间: ${this.metrics.timeToInteractive.toFixed(2)}ms`);
                     }
                 }, { once: true, passive: true });
             });
@@ -266,7 +266,7 @@
                 // 每100次滚动报告一次
                 if (scrollCount % 100 === 0) {
                     const laggyPercentage = (laggyScrolls / scrollCount) * 100;
-                    console.log(`滚动性能: ${laggyPercentage.toFixed(1)}% 的滚动事件超过16.67ms`);
+                    // console.log(`滚动性能: ${laggyPercentage.toFixed(1)}% 的滚动事件超过16.67ms`);
                 }
             };
             
@@ -286,7 +286,7 @@
             // 内存使用情况
             if ('memory' in performance) {
                 const memory = performance.memory;
-                console.log(`内存使用: ${(memory.usedJSHeapSize / 1024 / 1024).toFixed(2)}MB / ${(memory.totalJSHeapSize / 1024 / 1024).toFixed(2)}MB`);
+                // console.log(`内存使用: ${(memory.usedJSHeapSize / 1024 / 1024).toFixed(2)}MB / ${(memory.totalJSHeapSize / 1024 / 1024).toFixed(2)}MB`);
             }
             
             // 检查优化状态
@@ -327,7 +327,7 @@
                 recommendations: this.generateRecommendations()
             };
             
-            console.log('性能报告:', report);
+            // console.log('性能报告:', report);
             
             // 发送到分析服务
             this.sendPerformanceReport(report);
@@ -419,7 +419,7 @@
         // 发送性能报告
         sendPerformanceReport(report) {
             // 这里可以发送到你的分析服务
-            console.log('发送性能报告到分析服务');
+            // console.log('发送性能报告到分析服务');
             
             // 示例：发送到Google Analytics
             if (typeof gtag !== 'undefined') {
@@ -494,7 +494,7 @@
             });
             
             if (violations.length > 0) {
-                console.warn('性能预算超标:', violations);
+                // console.warn('性能预算超标:', violations);
             }
             
             return violations;

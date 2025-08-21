@@ -56,7 +56,7 @@ class LoadingErrorHandler {
     }
     
     handleOnline() {
-        console.log('🌐 网络连接已恢复');
+        // // console.log('🌐 网络连接已恢复');
         this.isOnline = true;
         this.reconnectAttempts = 0;
         
@@ -83,7 +83,7 @@ class LoadingErrorHandler {
     }
     
     handleOffline() {
-        console.log('❌ 网络连接已断开');
+        // // console.log('❌ 网络连接已断开');
         this.isOnline = false;
         
         // 显示网络状态指示器
@@ -174,12 +174,12 @@ class LoadingErrorHandler {
             this.hideReconnectIndicator();
             clearInterval(this.reconnectInterval);
             this.reconnectInterval = null;
-            console.log('🔄 已达到最大重连次数，停止自动重连');
+            // // console.log('🔄 已达到最大重连次数，停止自动重连');
             return;
         }
         
         this.reconnectAttempts++;
-        console.log(`🔄 尝试重连 (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+        // // console.log(`🔄 尝试重连 (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
         
         try {
             // 尝试发送一个简单的网络请求来检测连接
@@ -194,7 +194,7 @@ class LoadingErrorHandler {
                 this.handleOnline();
             }
         } catch (error) {
-            console.log(`❌ 重连失败 (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+            // // console.log(`❌ 重连失败 (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
         }
     }
     
@@ -216,7 +216,7 @@ class LoadingErrorHandler {
                 throw new Error('网络仍然不可用');
             }
         } catch (error) {
-            console.error('❌ 手动重连失败:', error);
+            // // console.error('❌ 手动重连失败:', error);
             this.showErrorToast('重连失败，请检查网络设置');
         } finally {
             // 恢复按钮状态

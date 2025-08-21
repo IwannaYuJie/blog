@@ -256,7 +256,9 @@
    ```javascript
    // 测试CDN可访问性
    fetch('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css')
-     .then(response => console.log('Font Awesome CDN状态:', response.status));
+     .then(response => {
+       // console.log('Font Awesome CDN状态:', response.status);
+     });
    ```
 
 ## 📱 功能性问题
@@ -273,16 +275,20 @@
 1. **检查表单验证**
    ```javascript
    // 在handleContactForm函数中添加调试
-   console.log('表单数据:', formData);
-   console.log('用户认证状态:', auth.currentUser);
+   // console.log('表单数据:', formData);
+   // console.log('用户认证状态:', auth.currentUser);
    ```
 
 2. **验证Firestore权限**
    ```javascript
    // 测试写入权限
    db.collection('test').add({test: true})
-     .then(() => console.log('写入权限正常'))
-     .catch(error => console.error('写入权限错误:', error));
+     .then(() => {
+       // console.log('写入权限正常');
+     })
+     .catch(error => {
+       // console.error('写入权限错误:', error);
+     });
    ```
 
 ### 问题11：文章分页不工作
@@ -297,8 +303,8 @@
 1. **检查分页逻辑**
    ```javascript
    // 调试分页状态
-   console.log('lastVisible:', lastVisible);
-   console.log('当前文章数:', document.querySelectorAll('.post-card').length);
+   // console.log('lastVisible:', lastVisible);
+   // console.log('当前文章数:', document.querySelectorAll('.post-card').length);
    ```
 
 2. **重置分页状态**
@@ -319,7 +325,7 @@
    
    // 查看所有错误
    window.addEventListener('error', (e) => {
-     console.error('全局错误:', e.error);
+     // console.error('全局错误:', e.error);
    });
    ```
 
@@ -356,7 +362,7 @@ function debugApp() {
     }
   };
   
-  console.table(info);
+  // console.table(info);
   return info;
 }
 
@@ -428,7 +434,7 @@ function debugApp() {
    window.addEventListener('load', () => {
      const loadTime = performance.now();
      if (loadTime > 3000) {
-       console.warn('页面加载时间过长:', loadTime + 'ms');
+       // console.warn('页面加载时间过长:', loadTime + 'ms');
      }
    });
    ```
@@ -437,7 +443,7 @@ function debugApp() {
    ```javascript
    // 全局错误处理
    window.addEventListener('unhandledrejection', (e) => {
-     console.error('未处理的Promise错误:', e.reason);
+     // console.error('未处理的Promise错误:', e.reason);
    });
    ```
 

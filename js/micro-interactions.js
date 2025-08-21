@@ -149,7 +149,7 @@ class MicroInteractions {
                 this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 this.generateSounds();
             } catch (error) {
-                console.warn('音频上下文初始化失败:', error);
+                // // console.warn('音频上下文初始化失败:', error);
                 this.soundEnabled = false;
             }
         }

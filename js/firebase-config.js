@@ -32,37 +32,37 @@ try {
       ignoreUndefinedProperties: true
     };
     
-    console.log('🗄️ Firestore初始化成功');
+    // // console.log('🗄️ Firestore初始化成功');
   } catch (firestoreError) {
-    console.error('❌ Firestore初始化失败:', firestoreError.message);
+    // // console.error('❌ Firestore初始化失败:', firestoreError.message);
   }
   
   // Auth初始化
   try {
     auth = firebase.auth();
-    console.log('🔐 Auth初始化成功');
+    // // console.log('🔐 Auth初始化成功');
   } catch (authError) {
-    console.warn('⚠️ Auth初始化失败:', authError.message);
+    // // console.warn('⚠️ Auth初始化失败:', authError.message);
   }
   
   // Analytics初始化（开发环境下可能失败）
   try {
     if (!isDevelopment || isHTTPS) {
       analytics = firebase.analytics();
-      console.log('📊 Analytics初始化成功');
+      // // console.log('📊 Analytics初始化成功');
     } else {
-      console.log('🔧 开发环境下跳过Analytics初始化');
+      // // console.log('🔧 开发环境下跳过Analytics初始化');
     }
   } catch (analyticsError) {
-    console.warn('⚠️ Analytics初始化失败（可能是广告拦截器或网络问题）:', analyticsError.message);
+    // // console.warn('⚠️ Analytics初始化失败（可能是广告拦截器或网络问题）:', analyticsError.message);
   }
   
   // Auth初始化
   try {
     auth = firebase.auth();
-    console.log('🔐 Auth初始化成功');
+    // console.log('🔐 Auth初始化成功');
   } catch (authError) {
-    console.warn('⚠️ Auth初始化失败:', authError.message);
+    // console.warn('⚠️ Auth初始化失败:', authError.message);
   }
   
   // 全局变量，供其他脚本使用
@@ -75,10 +75,10 @@ try {
     isHTTPS
   };
   
-  console.log('🔥 Firebase配置完成');
+  // // console.log('🔥 Firebase配置完成');
   
 } catch (error) {
-  console.error('❌ Firebase初始化完全失败:', error);
+  // // console.error('❌ Firebase初始化完全失败:', error);
   // Firebase不可用时不提供降级方案
   window.firebaseApp = {
     analytics: null,
@@ -88,5 +88,5 @@ try {
     isDevelopment: true,
     isHTTPS: false
   };
-  console.log('❌ Firebase不可用');
+  // // console.log('❌ Firebase不可用');
 }

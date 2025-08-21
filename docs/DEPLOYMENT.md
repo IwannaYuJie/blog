@@ -254,10 +254,10 @@ npm install --save-dev imagemin imagemin-webp
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js')
     .then(registration => {
-      console.log('SW注册成功:', registration);
+      // console.log('SW注册成功:', registration);
     })
     .catch(error => {
-      console.log('SW注册失败:', error);
+      // console.log('SW注册失败:', error);
     });
 }
 ```
@@ -282,7 +282,7 @@ if ('serviceWorker' in navigator) {
 window.addEventListener('load', () => {
   if ('performance' in window) {
     const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
-    console.log('页面加载时间:', loadTime + 'ms');
+    // console.log('页面加载时间:', loadTime + 'ms');
     
     // 发送到Analytics（如果需要）
     if (window.gtag) {
@@ -331,11 +331,11 @@ window.addEventListener('load', () => {
 ```javascript
 // 添加调试信息
 function debugInfo() {
-  console.log('🔍 调试信息:');
-  console.log('- Firebase状态:', window.firebaseApp ? '已连接' : '未连接');
-  console.log('- 当前用户:', currentUser ? '已认证' : '未认证');
-  console.log('- 网络状态:', navigator.onLine ? '在线' : '离线');
-  console.log('- 用户代理:', navigator.userAgent);
+  // console.log('🔍 调试信息:');
+  // console.log('- Firebase状态:', window.firebaseApp ? '已连接' : '未连接');
+  // console.log('- 当前用户:', currentUser ? '已认证' : '未认证');
+  // console.log('- 网络状态:', navigator.onLine ? '在线' : '离线');
+  // console.log('- 用户代理:', navigator.userAgent);
 }
 
 // 在控制台调用

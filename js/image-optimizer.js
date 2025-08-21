@@ -28,7 +28,7 @@
         
         // 初始化图片优化
         init() {
-            console.log('初始化图片优化...');
+            // console.log('初始化图片优化...');
             
             // 1. 检测浏览器支持的图片格式
             this.detectFormatSupport();
@@ -57,7 +57,7 @@
             // 检测HEIC支持
             this.supportedFormats.heic = await this.checkHEICSupport();
             
-            console.log('支持的图片格式:', this.supportedFormats);
+            // console.log('支持的图片格式:', this.supportedFormats);
         },
         
         // 检测WebP支持
@@ -188,7 +188,7 @@
                 img.dispatchEvent(event);
                 
             } catch (error) {
-                console.error('图片加载失败:', error);
+                // console.error('图片加载失败:', error);
                 this.handleImageError(img, error);
             }
         },
@@ -223,7 +223,7 @@
                 
                 newImg.onerror = () => {
                     if (attempt < this.config.retryAttempts) {
-                        console.warn(`图片加载失败，重试 ${attempt}/${this.config.retryAttempts}: ${src}`);
+                        // console.warn(`图片加载失败，重试 ${attempt}/${this.config.retryAttempts}: ${src}`);
                         setTimeout(() => {
                             this.loadImageWithRetry(img, src, attempt + 1)
                                 .then(resolve)
@@ -415,7 +415,7 @@
                 
                 // 如果图片明显过大，添加警告
                 if (img.naturalWidth > optimalWidth * 2) {
-                    console.warn(`图片尺寸过大: ${img.src}, 建议尺寸: ${optimalWidth}x${optimalHeight}`);
+                    // console.warn(`图片尺寸过大: ${img.src}, 建议尺寸: ${optimalWidth}x${optimalHeight}`);
                 }
             }
         },

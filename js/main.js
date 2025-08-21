@@ -188,10 +188,10 @@ function waitForFirebase() {
         function checkFirebase() {
             if (window.firebaseApp) {
                 // Firebase服务已在firebase-config.js中初始化并声明为全局变量
-                console.log('🔥 Firebase服务加载成功');
+                // Firebase服务加载成功
                 resolve();
             } else if (attempts >= maxAttempts) {
-                console.warn('⚠️ Firebase加载超时');
+                // Firebase加载超时
                 reject(new Error('Firebase加载超时'));
             } else {
                 attempts++;
@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // 等待微交互系统初始化完成
     if (window.microInteractions) {
-        console.log('✅ 微交互系统已就绪');
+        // 微交互系统已就绪
     }
     
     await initializeApp();
@@ -269,7 +269,7 @@ async function initializeApp() {
         // 等待Firebase加载（带超时）
         await waitForFirebase();
         
-        console.log('✅ Firebase初始化成功');
+        // Firebase初始化成功
         
         // 从window.firebaseApp获取Firebase服务
         if (window.firebaseApp) {
@@ -277,14 +277,10 @@ async function initializeApp() {
             auth = window.firebaseApp.auth;
             analytics = window.firebaseApp.analytics;
             
-            console.log('🔗 Firebase服务连接成功:', {
-                db: !!db,
-                auth: !!auth,
-                analytics: !!analytics
-            });
+            // Firebase服务连接成功
             
             // 使用AuthManager的认证状态监听器
-            console.log('🔍 检查AuthManager:', !!window.authManager);
+            // 检查AuthManager
             if (window.authManager) {
                 window.authManager.addAuthStateListener((user) => {
                     currentUser = user;
@@ -293,12 +289,11 @@ async function initializeApp() {
                     if (postsContainer && postsContainer.children.length > 0) {
                         loadPosts(true); // 重新加载文章列表以更新权限显示
                     }
-                    console.log('🔄 用户状态变化:', user ? '已登录' : '未登录');
-                    console.log('🔍 当前用户信息:', user ? { uid: user.uid, email: user.email } : null);
+                    // 用户状态变化
                 });
-                console.log('✅ AuthManager监听器已设置');
+                // AuthManager监听器已设置
             } else {
-                console.error('❌ AuthManager未找到，回退到直接监听auth');
+                // AuthManager未找到，回退到直接监听auth
                 // 回退方案：直接监听auth
                 if (auth) {
                     auth.onAuthStateChanged((user) => {
@@ -308,8 +303,7 @@ async function initializeApp() {
                         if (postsContainer && postsContainer.children.length > 0) {
                             loadPosts(true); // 重新加载文章列表以更新权限显示
                         }
-                        console.log('🔄 用户状态变化(回退):', user ? '已登录' : '未登录');
-                        console.log('🔍 当前用户信息(回退):', user ? { uid: user.uid, email: user.email } : null);
+                        // 用户状态变化(回退)
                     });
                 }
             }
@@ -322,7 +316,7 @@ async function initializeApp() {
                 await loadAuthors(); // 加载作者列表
                 updateUIPermissions(); // 初始化UI权限状态
             } catch (firestoreError) {
-                console.warn('⚠️ Firestore连接失败:', firestoreError.message);
+                // Firestore连接失败
                 
                 // 显示Firestore连接错误
                 if (window.loadingErrorHandler) {
@@ -335,7 +329,7 @@ async function initializeApp() {
                 }
             }
         } else {
-            console.log('❌ Firestore不可用');
+            // Firestore不可用
             
             // 显示服务不可用错误
             if (window.loadingErrorHandler) {
@@ -349,7 +343,7 @@ async function initializeApp() {
         }
         
     } catch (error) {
-        console.error('❌ Firebase初始化失败:', error.message);
+        // Firebase初始化失败
         
         // 显示Firebase初始化错误
         if (window.loadingErrorHandler) {
@@ -377,7 +371,7 @@ async function loadAuthors() {
     if (!db || !authorFilter) return;
     
     try {
-        console.log('👥 开始加载作者列表...');
+        // 开始加载作者列表
         
         // 获取所有文章的作者信息
         const postsRef = db.collection('posts');
@@ -411,7 +405,7 @@ async function loadAuthors() {
             authorFilter.appendChild(option);
         });
         
-        console.log(`👥 成功加载 ${authorsArray.length} 位作者`);
+        // 成功加载作者列表
         
     } catch (error) {
         console.error('❌ 加载作者列表失败:', error);
@@ -423,7 +417,7 @@ async function loadPosts(reset = false) {
     if (isLoading) return;
     
     isLoading = true;
-    console.log('📖 开始加载文章...');
+    // 开始加载文章
     
     try {
         if (reset) {
@@ -438,7 +432,7 @@ async function loadPosts(reset = false) {
         
         // 检查数据库连接
         if (!db) {
-            console.warn('⚠️ Firestore未初始化');
+            // Firestore未初始化
             return;
         }
         
@@ -505,7 +499,7 @@ async function loadPosts(reset = false) {
             return;
         }
         
-        console.log(`✅ 成功加载 ${snapshot.size} 篇文章`);
+        // console.log(`✅ 成功加载 ${snapshot.size} 篇文章`);
         
         // 批量处理文档数据
         const posts = [];
@@ -527,7 +521,7 @@ async function loadPosts(reset = false) {
             posts.push(post);
         });
         
-        console.log('📋 文章数据处理完成，包含authorId字段:', posts.map(p => ({ id: p.id, authorId: p.authorId })));
+        // console.log('📋 文章数据处理完成，包含authorId字段:', posts.map(p => ({ id: p.id, authorId: p.authorId })));
         
         // 批量渲染文章
         posts.forEach(post => displayPost(post));
@@ -546,10 +540,10 @@ async function loadPosts(reset = false) {
         
         // 控制加载更多按钮显示
         loadMoreBtn.style.display = snapshot.size < postsPerPage ? 'none' : 'block';
-        console.log('🎉 文章加载完成');
+        // console.log('🎉 文章加载完成');
         
     } catch (error) {
-        console.error('❌ 加载文章失败:', error);
+        // console.error('❌ 加载文章失败:', error);
         
         // 根据错误类型提供不同的处理和显示
         let errorTitle = '加载失败';
@@ -558,17 +552,17 @@ async function loadPosts(reset = false) {
         if (error.code === 'permission-denied') {
             errorTitle = '权限不足';
             errorMessage = '抱歉，您没有权限访问这些内容。';
-            console.warn('⚠️ 权限不足');
+            // console.warn('⚠️ 权限不足');
         } else if (error.code === 'unavailable') {
             errorTitle = '服务不可用';
             errorMessage = '服务暂时不可用，请稍后重试。';
-            console.warn('⚠️ 服务不可用');
+            // console.warn('⚠️ 服务不可用');
         } else if (error.message === '查询超时') {
             errorTitle = '加载超时';
             errorMessage = '加载时间过长，请检查网络连接后重试。';
-            console.warn('⚠️ 查询超时');
+            // console.warn('⚠️ 查询超时');
         } else {
-            console.warn('⚠️ 网络错误');
+            // console.warn('⚠️ 网络错误');
         }
         
         // 显示错误状态
@@ -614,35 +608,35 @@ function displayPost(post) {
     
     // 强制检查：如果没有有效用户但auth中有用户，更新全局currentUser
     if (!currentUser && authCurrentUser) {
-        console.log('🔄 检测到用户状态不同步，正在更新全局currentUser');
+        // console.log('🔄 检测到用户状态不同步，正在更新全局currentUser');
         window.currentUser = authCurrentUser;
     }
     
     // 详细的调试日志
-    console.log('🔍 权限检查详情:', {
-        hasCurrentUser,
-        hasAuthorId,
-        userUid,
-        authUserUid,
-        effectiveUid,
-        authorId,
-        isAuthor,
-        postTitle: post.title,
-        currentUserEmail: currentUser?.email,
-        authUserEmail: authCurrentUser?.email
-    });
+    // console.log('🔍 权限检查详情:', {
+    //     hasCurrentUser,
+    //     hasAuthorId,
+    //     userUid,
+    //     authUserUid,
+    //     effectiveUid,
+    //     authorId,
+    //     isAuthor,
+    //     postTitle: post.title,
+    //     currentUserEmail: currentUser?.email,
+    //     authUserEmail: authCurrentUser?.email
+    // });
     
     // 如果没有用户登录或没有作者ID，记录警告
     if (!effectiveUser) {
-        console.warn('⚠️ 用户未登录，无法显示编辑/删除按钮');
+        // console.warn('⚠️ 用户未登录，无法显示编辑/删除按钮');
     }
     if (!hasAuthorId) {
-        console.warn('⚠️ 文章缺少作者ID，无法进行权限检查:', post.title);
+        // console.warn('⚠️ 文章缺少作者ID，无法进行权限检查:', post.title);
     }
     
     // 如果用户已登录但不是作者，添加友好提示
     if (effectiveUser && hasAuthorId && !isAuthor) {
-        console.log('ℹ️ 当前用户不是文章作者，无编辑权限');
+        // console.log('ℹ️ 当前用户不是文章作者，无编辑权限');
     }
     
     // 只有作者才显示编辑和删除按钮
@@ -845,13 +839,13 @@ function setupEventListeners() {
     
     // 监听网络恢复事件
     window.addEventListener('networkRestored', () => {
-        console.log('🌐 网络恢复，重新加载数据');
+        // console.log('🌐 网络恢复，重新加载数据');
         loadPosts(true);
     });
     
     // 监听重试请求事件
     window.addEventListener('retryRequested', () => {
-        console.log('🔄 用户请求重试');
+        // console.log('🔄 用户请求重试');
         loadPosts(true);
     });
 }
@@ -919,7 +913,7 @@ async function handleContactForm(e) {
         }, 2000);
         
     } catch (error) {
-        console.error('❌ 发送消息失败:', error);
+        // console.error('❌ 发送消息失败:', error);
         
         let errorMessage = '发送失败，请稍后重试。';
         if (error.code === 'permission-denied') {
@@ -959,11 +953,11 @@ function updateUIPermissions() {
         if (user) {
             // 用户已登录，显示添加文章按钮
             addPostBtn.style.display = 'inline-flex';
-            console.log('👤 用户已登录，显示添加文章按钮:', user.email);
+            // console.log('👤 用户已登录，显示添加文章按钮:', user.email);
         } else {
             // 用户未登录，隐藏添加文章按钮
             addPostBtn.style.display = 'none';
-            console.log('🚫 用户未登录，隐藏添加文章按钮');
+            // console.log('🚫 用户未登录，隐藏添加文章按钮');
         }
     }
 }
@@ -1575,7 +1569,7 @@ window.confirmDeletePost = confirmDeletePost;
 window.deletePost = deletePost;
 window.openPostModal = openPostModal;
 
-console.log('🚀 博客应用初始化完成');
+// 博客应用初始化完成
 
 // ========================================
 // 现代化按钮交互系统 - 涟漪效果和微交互
@@ -2531,7 +2525,7 @@ window.ScrollAnimations = {
     enhancePostCardAnimations
 };
 
-console.log('🎬 滚动动画系统初始化完成');
+// 滚动动画系统初始化完成
 // ========================================
 // 现代化表单系统
 // ========================================

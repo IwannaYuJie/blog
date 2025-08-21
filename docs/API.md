@@ -53,9 +53,9 @@ function waitForFirebase(): Promise<void>
 ```javascript
 try {
     await waitForFirebase();
-    console.log('Firebase加载成功');
+    // console.log('Firebase加载成功');
 } catch (error) {
-    console.error('Firebase加载超时');
+    // console.error('Firebase加载超时');
 }
 ```
 
@@ -256,7 +256,7 @@ contactForm.addEventListener('submit', handleContactForm);
 try {
     // 主要逻辑
 } catch (error) {
-    console.error('操作失败:', error);
+    // console.error('操作失败:', error);
     // 备用方案或用户提示
 }
 ```
@@ -273,10 +273,10 @@ try {
 开发模式下，控制台会输出详细日志：
 
 ```javascript
-console.log('🔥 Firebase服务加载成功');
-console.log('📖 开始加载文章...');
-console.log('✅ 成功加载 X 篇文章');
-console.log('🎉 文章加载完成');
+// console.log('🔥 Firebase服务加载成功');
+// console.log('📖 开始加载文章...');
+// console.log('✅ 成功加载 X 篇文章');
+// console.log('🎉 文章加载完成');
 ```
 
 ---

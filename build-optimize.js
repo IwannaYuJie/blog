@@ -23,7 +23,7 @@ class BuildOptimizer {
     
     // 运行构建优化
     async run() {
-        console.log('开始构建优化...');
+        // console.log('开始构建优化...');
         
         try {
             // 1. 创建输出目录
@@ -44,9 +44,9 @@ class BuildOptimizer {
             // 6. 生成构建报告
             this.generateBuildReport();
             
-            console.log('构建优化完成！');
+            // console.log('构建优化完成！');
         } catch (error) {
-            console.error('构建优化失败:', error);
+            // console.error('构建优化失败:', error);
             process.exit(1);
         }
     }
@@ -68,7 +68,7 @@ class BuildOptimizer {
     
     // 压缩CSS
     async minifyCSS() {
-        console.log('压缩CSS文件...');
+        // console.log('压缩CSS文件...');
         
         const cssFiles = this.findFiles('css', '.css');
         
@@ -93,7 +93,7 @@ class BuildOptimizer {
             const minifiedSize = minified.length;
             const savings = ((originalSize - minifiedSize) / originalSize * 100).toFixed(1);
             
-            console.log(`  ${cssFile}: ${originalSize} → ${minifiedSize} bytes (${savings}% 节省)`);
+            // console.log(`  ${cssFile}: ${originalSize} → ${minifiedSize} bytes (${savings}% 节省)`);
         }
     }
     
@@ -121,7 +121,7 @@ class BuildOptimizer {
     
     // 压缩HTML
     async minifyHTML() {
-        console.log('压缩HTML文件...');
+        // // console.log('压缩HTML文件...');
         
         const htmlFiles = this.findFiles('.', '.html');
         
@@ -140,7 +140,7 @@ class BuildOptimizer {
             const minifiedSize = minified.length;
             const savings = ((originalSize - minifiedSize) / originalSize * 100).toFixed(1);
             
-            console.log(`  ${htmlFile}: ${originalSize} → ${minifiedSize} bytes (${savings}% 节省)`);
+            // // console.log(`  ${htmlFile}: ${originalSize} → ${minifiedSize} bytes (${savings}% 节省)`);
         }
     }
     
@@ -160,7 +160,7 @@ class BuildOptimizer {
     
     // 生成关键CSS
     async generateCriticalCSS() {
-        console.log('生成关键CSS...');
+        // // console.log('生成关键CSS...');
         
         // 读取现有的关键CSS
         const criticalCSSPath = path.join(this.config.sourceDir, 'css', 'critical.css');
@@ -172,13 +172,13 @@ class BuildOptimizer {
             const outputPath = path.join(this.config.outputDir, 'css', 'critical.min.css');
             fs.writeFileSync(outputPath, minified);
             
-            console.log(`  关键CSS已生成: ${outputPath}`);
+            // // console.log(`  关键CSS已生成: ${outputPath}`);
         }
     }
     
     // 复制其他文件
     async copyOtherFiles() {
-        console.log('复制其他文件...');
+        // // console.log('复制其他文件...');
         
         const filesToCopy = [
             'js/**/*.js',
@@ -242,7 +242,7 @@ class BuildOptimizer {
     
     // 生成构建报告
     generateBuildReport() {
-        console.log('生成构建报告...');
+        // // console.log('生成构建报告...');
         
         const report = {
             buildTime: new Date().toISOString(),
@@ -267,15 +267,18 @@ class BuildOptimizer {
         const reportPath = path.join(this.config.outputDir, 'build-report.json');
         fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
         
-        console.log('构建报告已生成:', reportPath);
-        console.log('优化统计:', report.files);
+        // // console.log('构建报告已生成:', reportPath);
+        // console.log('优化统计:', report.files);
     }
 }
 
 // 如果直接运行此脚本
 if (require.main === module) {
     const optimizer = new BuildOptimizer();
-    optimizer.run().catch(console.error);
+    optimizer.run().catch(err => {
+        // console.error(err);
+        process.exit(1);
+    });
 }
 
 module.exports = BuildOptimizer;

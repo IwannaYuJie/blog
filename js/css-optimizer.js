@@ -49,7 +49,7 @@
         
         // 初始化CSS优化
         init() {
-            console.log('初始化CSS优化...');
+            // console.log('初始化CSS优化...');
             
             // 1. 分析页面使用的CSS
             this.analyzeUsedCSS();
@@ -105,7 +105,7 @@
                 }
             });
             
-            console.log(`分析完成，发现 ${this.usedSelectors.size} 个使用的选择器`);
+            // console.log(`分析完成，发现 ${this.usedSelectors.size} 个使用的选择器`);
         },
         
         // 提取关键CSS
@@ -124,7 +124,7 @@
                     });
                 } catch (e) {
                     // 跨域样式表无法访问
-                    console.warn('无法访问样式表:', stylesheet.href);
+                    // console.warn('无法访问样式表:', stylesheet.href);
                 }
             });
             
@@ -191,7 +191,7 @@
                 document.head.appendChild(style);
             }
             
-            console.log(`内联关键CSS: ${minifiedCSS.length} 字符`);
+            // console.log(`内联关键CSS: ${minifiedCSS.length} 字符`);
         },
         
         // 延迟加载非关键CSS
@@ -254,7 +254,7 @@
                         }
                     });
                 } catch (e) {
-                    console.warn('无法分析样式表:', stylesheet.href);
+                    // console.warn('无法分析样式表:', stylesheet.href);
                 }
             });
             
@@ -263,11 +263,11 @@
                 try {
                     stylesheet.deleteRule(index);
                 } catch (e) {
-                    console.warn('无法删除CSS规则:', e);
+                    // console.warn('无法删除CSS规则:', e);
                 }
             });
             
-            console.log(`移除了 ${unusedRules.length} 个未使用的CSS规则`);
+            // console.log(`移除了 ${unusedRules.length} 个未使用的CSS规则`);
         },
         
         // 检查选择器是否被使用
@@ -341,7 +341,7 @@
                 
                 entries.forEach(entry => {
                     if (entry.initiatorType === 'css' || entry.name.includes('.css')) {
-                        console.log(`CSS加载时间: ${entry.name} - ${entry.duration.toFixed(2)}ms`);
+                        // console.log(`CSS加载时间: ${entry.name} - ${entry.duration.toFixed(2)}ms`);
                     }
                 });
             });
@@ -349,7 +349,7 @@
             try {
                 observer.observe({ entryTypes: ['resource'] });
             } catch (e) {
-                console.warn('无法监控CSS性能');
+                // console.warn('无法监控CSS性能');
             }
             
             // 监控样式重计算
@@ -366,7 +366,7 @@
                 
                 // 如果时间间隔异常长，可能发生了样式重计算
                 if (timeSinceLastCheck > 50) {
-                    console.warn(`可能的样式重计算: ${timeSinceLastCheck.toFixed(2)}ms`);
+                    // console.warn(`可能的样式重计算: ${timeSinceLastCheck.toFixed(2)}ms`);
                 }
                 
                 lastRecalcTime = now;
@@ -387,7 +387,7 @@
                 config: this.config
             };
             
-            console.log('CSS使用报告:', report);
+            // console.log('CSS使用报告:', report);
             return report;
         },
         
@@ -405,7 +405,7 @@
                 }
             }
             
-            console.log(`发现 ${Object.keys(cssVariables).length} 个CSS变量`);
+            // console.log(`发现 ${Object.keys(cssVariables).length} 个CSS变量`);
             
             // 这里可以添加变量优化逻辑
             // 例如：合并相似的变量、移除未使用的变量等
@@ -436,7 +436,7 @@
         
         // CSS加载完成回调
         onCSSLoaded(link) {
-            console.log(`CSS加载完成: ${link.href}`);
+            // console.log(`CSS加载完成: ${link.href}`);
             
             // 触发自定义事件
             const event = new CustomEvent('cssLoaded', {
@@ -447,7 +447,7 @@
         
         // CSS加载错误回调
         onCSSError(link) {
-            console.error(`CSS加载失败: ${link.href}`);
+            // console.error(`CSS加载失败: ${link.href}`);
             
             // 触发自定义事件
             const event = new CustomEvent('cssError', {

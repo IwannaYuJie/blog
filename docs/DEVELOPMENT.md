@@ -128,7 +128,7 @@ const functionName = async () => {
         const result = await someAsyncOperation();
         return result;
     } catch (error) {
-        console.error('操作失败:', error);
+        // console.error('操作失败:', error);
         // 错误处理
     }
 };
@@ -208,16 +208,16 @@ npm run dev
 
 ```javascript
 // 在浏览器控制台运行调试命令
-debugApp(); // 查看应用状态
+// debugApp(); // 查看应用状态
 
 // 测试Firebase连接
-console.log('Firebase状态:', window.firebaseApp);
+// console.log('Firebase状态:', window.firebaseApp);
 
 // 测试用户认证
-console.log('用户状态:', currentUser);
+// console.log('用户状态:', currentUser);
 
 // 测试数据加载
-loadPosts(true); // 重新加载文章
+// loadPosts(true); // 重新加载文章
 ```
 
 ## 🔥 Firebase 开发
@@ -426,13 +426,13 @@ service cloud.firestore {
 1. **Console面板**
    ```javascript
    // 启用详细日志
-   localStorage.setItem('debug', 'true');
+   // localStorage.setItem('debug', 'true');
    
    // 查看应用状态
-   debugApp();
+   // debugApp();
    
    // 测试Firebase功能
-   loadPosts(true);
+   // loadPosts(true);
    ```
 
 2. **Network面板**
@@ -452,7 +452,7 @@ service cloud.firestore {
 function measurePerformance() {
   const observer = new PerformanceObserver((list) => {
     for (const entry of list.getEntries()) {
-      console.log(`${entry.name}: ${entry.duration}ms`);
+      // console.log(`${entry.name}: ${entry.duration}ms`);
     }
   });
   
@@ -462,11 +462,11 @@ function measurePerformance() {
 // 内存使用监控
 function checkMemoryUsage() {
   if (performance.memory) {
-    console.log('内存使用:', {
-      used: Math.round(performance.memory.usedJSHeapSize / 1048576) + 'MB',
-      total: Math.round(performance.memory.totalJSHeapSize / 1048576) + 'MB',
-      limit: Math.round(performance.memory.jsHeapSizeLimit / 1048576) + 'MB'
-    });
+    // console.log('内存使用:', {
+    //   used: Math.round(performance.memory.usedJSHeapSize / 1048576) + 'MB',
+    //   total: Math.round(performance.memory.totalJSHeapSize / 1048576) + 'MB',
+    //   limit: Math.round(performance.memory.jsHeapSizeLimit / 1048576) + 'MB'
+    // });
   }
 }
 ```
