@@ -1,0 +1,99 @@
+rules_version = '2';
+
+// Firebase Firestore 安全规则
+// 这些规则定义了谁可以访问数据库中的哪些数据
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 用户数据集合 - 只允许用户访问自己的数据
+    match /users/{userId} {
+      // 用户只能读写自己的文档
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // 用户个人资料子集合
+      match /profile/{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    // 博客文章集合 - 公开读取，只有认证用户可以写入
+    match /posts/{postId} {
+      // 所有人都可以读取已发布的文章
+      allow read: if resource.data.published == true;
+      
+      // 只有文章作者可以读取未发布的文章
+      allow read: if request.auth != null && 
+                     request.auth.uid == resource.data.authorId;
+      
+      // 只有认证用户可以创建文章
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.authorId &&
+                       validatePostData();
+      
+      // 只有文章作者可以更新和删除文章
+      allow update, delete: if request.auth != null && 
+                               request.auth.uid == resource.data.authorId;
+      
+      // 评论子集合
+      match /comments/{commentId} {
+        // 所有人都可以读取评论
+        allow read: if true;
+        
+        // 只有认证用户可以创建评论
+        allow create: if request.auth != null && 
+                         request.auth.uid == request.resource.data.authorId &&
+                         validateCommentData();
+        
+        // 只有评论作者可以更新和删除评论
+        allow update, delete: if request.auth != null && 
+                                 request.auth.uid == resource.data.authorId;
+      }
+    }
+    
+    // 管理员集合 - 只有管理员可以访问
+    match /admin/{document=**} {
+      allow read, write: if request.auth != null && 
+                           isAdmin(request.auth.uid);
+    }
+    
+    // 系统配置 - 只读访问
+    match /config/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null && 
+                      isAdmin(request.auth.uid);
+    }
+    
+    // 默认拒绝所有其他访问
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+// 验证文章数据的函数
+function validatePostData() {
+  return request.resource.data.keys().hasAll(['title', 'content', 'authorId', 'createdAt']) &&
+         request.resource.data.title is string &&
+         request.resource.data.title.size() > 0 &&
+         request.resource.data.content is string &&
+         request.resource.data.content.size() > 0 &&
+         request.resource.data.authorId is string &&
+         request.resource.data.createdAt is timestamp;
+}
+
+// 验证评论数据的函数
+function validateCommentData() {
+  return request.resource.data.keys().hasAll(['content', 'authorId', 'createdAt']) &&
+         request.resource.data.content is string &&
+         request.resource.data.content.size() > 0 &&
+         request.resource.data.content.size() <= 1000 &&
+         request.resource.data.authorId is string &&
+         request.resource.data.createdAt is timestamp;
+}
+
+// 检查用户是否为管理员的函数
+function isAdmin(userId) {
+  // 这里可以根据实际需求实现管理员检查逻辑
+  // 例如：检查用户是否在管理员列表中
+  return exists(/databases/$(database)/documents/admins/$(userId));
+}
