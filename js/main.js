@@ -172,12 +172,31 @@ let isLoading = false;
 let currentCategory = 'all';
 let currentAuthor = 'all'; // 当前选择的作者筛选
 const postsPerPage = 6;
-// Firebase服务变量
+
 let db = null;
 let auth = null;
 let analytics = null;
 let currentEditingPostId = null; // 当前编辑的文章ID
 let deletePostId = null; // 待删除的文章ID
+
+// 管理员邮箱配置
+const ADMIN_EMAIL = '958656603@qq.com';
+
+/**
+ * 检查当前用户是否为管理员
+ * @returns {boolean} 如果用户是管理员返回true，否则返回false
+ */
+function isAdmin() {
+    const globalCurrentUser = currentUser;
+    const authCurrentUser = auth?.currentUser;
+    const effectiveUser = globalCurrentUser || authCurrentUser;
+    
+    if (!effectiveUser || !effectiveUser.email) {
+        return false;
+    }
+    
+    return effectiveUser.email === ADMIN_EMAIL;
+}
 
 // 等待Firebase加载完成（带超时机制）
 function waitForFirebase() {
@@ -605,6 +624,7 @@ function displayPost(post) {
     const effectiveUser = currentUser || authCurrentUser;
     const effectiveUid = userUid || authUserUid;
     const isAuthor = effectiveUser && hasAuthorId && effectiveUid === authorId;
+    const isUserAdmin = isAdmin(); // 检查是否为管理员
     
     // 强制检查：如果没有有效用户但auth中有用户，更新全局currentUser
     if (!currentUser && authCurrentUser) {
@@ -639,8 +659,8 @@ function displayPost(post) {
         // console.log('ℹ️ 当前用户不是文章作者，无编辑权限');
     }
     
-    // 只有作者才显示编辑和删除按钮
-    const actionButtons = isAuthor ? `
+    // 作者或管理员才显示编辑和删除按钮
+    const actionButtons = (isAuthor || isUserAdmin) ? `
         <div class="post-actions">
             <button class="action-btn edit" onclick="editPost('${post.id}')" title="编辑文章">
                 <i class="fas fa-edit"></i>
@@ -1227,15 +1247,19 @@ async function editPost(postId) {
         if (doc.exists) {
             const data = doc.data();
             
-            // 检查权限：只有作者才能编辑自己的文章
+            // 检查权限：作者或管理员才能编辑文章
+            const isAuthor = data.authorId === effectiveUser.uid;
+            const isUserAdmin = isAdmin();
+            
             console.log('🔍 editPost文章权限验证:', {
                 articleAuthorId: data.authorId,
                 effectiveUserUid: effectiveUser.uid,
-                isAuthor: data.authorId === effectiveUser.uid,
+                isAuthor: isAuthor,
+                isAdmin: isUserAdmin,
                 articleTitle: data.title
             });
             
-            if (data.authorId && data.authorId !== effectiveUser.uid) {
+            if (data.authorId && !isAuthor && !isUserAdmin) {
                 if (window.loadingErrorHandler) {
                     window.loadingErrorHandler.showErrorToast('❌ 您只能编辑自己创建的文章');
                 } else {
@@ -1362,7 +1386,10 @@ async function deletePost(postId) {
             return;
         }
         
-        if (data.authorId && data.authorId !== effectiveUser.uid) {
+        const isAuthor = data.authorId === effectiveUser.uid;
+        const isUserAdmin = isAdmin();
+        
+        if (data.authorId && !isAuthor && !isUserAdmin) {
             alert('❌ 您只能删除自己创建的文章');
             hideDeleteModal();
             return;
