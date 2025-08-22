@@ -16,14 +16,10 @@ service cloud.firestore {
       }
     }
     
-    // 博客文章集合 - 公开读取，只有认证用户可以写入
+    // 博客文章集合 - 所有人都可以读取，只有认证用户可以写入
     match /posts/{postId} {
-      // 所有人都可以读取已发布的文章
-      allow read: if resource.data.published == true;
-      
-      // 只有文章作者可以读取未发布的文章
-      allow read: if request.auth != null && 
-                     request.auth.uid == resource.data.authorId;
+      // 所有人都可以读取文章
+      allow read: if true;
       
       // 只有认证用户可以创建文章
       allow create: if request.auth != null && 
