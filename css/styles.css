@@ -3818,31 +3818,7 @@ html {
     border-color: var(--primary-color);
 }
 
-/* 作者筛选下拉框样式 */
-.author-filter {
-    padding: 8px 16px;
-    border: 2px solid var(--border-color);
-    background: white;
-    color: var(--text-secondary);
-    border-radius: 25px;
-    cursor: pointer;
-    transition: var(--transition);
-    font-weight: 500;
-    min-width: 120px;
-    outline: none;
-}
 
-.author-filter:hover,
-.author-filter:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
-}
-
-.author-filter option {
-    padding: 8px;
-    background: white;
-    color: var(--text-primary);
-}
 
 /* ========================================
    现代化文章卡片组件 - 重构升级版

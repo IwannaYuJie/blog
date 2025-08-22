@@ -170,7 +170,7 @@ let currentUser = null;
 let lastVisible = null;
 let isLoading = false;
 let currentCategory = 'all';
-let currentAuthor = 'all'; // 当前选择的作者筛选
+
 const postsPerPage = 6;
 
 let db = null;
@@ -226,7 +226,7 @@ function waitForFirebase() {
 const postsContainer = document.getElementById('posts-container');
 const loadMoreBtn = document.getElementById('load-more-btn');
 const filterBtns = document.querySelectorAll('.filter-btn');
-const authorFilter = document.getElementById('author-filter'); // 作者筛选下拉框
+
 const contactForm = document.getElementById('contact-form');
 const backToTopBtn = document.getElementById('back-to-top');
 const mobileMenu = document.getElementById('mobile-menu');
@@ -332,7 +332,7 @@ async function initializeApp() {
         if (db) {
             try {
                 await loadPosts(true);
-                await loadAuthors(); // 加载作者列表
+        
                 updateUIPermissions(); // 初始化UI权限状态
             } catch (firestoreError) {
                 // Firestore连接失败
@@ -385,51 +385,7 @@ async function initializeApp() {
 
 
 
-// 加载作者列表到筛选下拉框
-async function loadAuthors() {
-    if (!db || !authorFilter) return;
-    
-    try {
-        // 开始加载作者列表
-        
-        // 获取所有文章的作者信息
-        const postsRef = db.collection('posts');
-        const snapshot = await postsRef.get();
-        
-        // 使用Set来去重作者
-        const authorsSet = new Set();
-        
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            if (data.authorId && data.authorDisplayName) {
-                // 存储作者ID和显示名称的组合
-                authorsSet.add(JSON.stringify({
-                    id: data.authorId,
-                    name: data.authorDisplayName || data.authorEmail || '匿名用户'
-                }));
-            }
-        });
-        
-        // 清空现有选项（保留"所有作者"选项）
-        authorFilter.innerHTML = '<option value="all">所有作者</option>';
-        
-        // 添加作者选项
-        const authorsArray = Array.from(authorsSet).map(authorStr => JSON.parse(authorStr));
-        authorsArray.sort((a, b) => a.name.localeCompare(b.name)); // 按名称排序
-        
-        authorsArray.forEach(author => {
-            const option = document.createElement('option');
-            option.value = author.id;
-            option.textContent = author.name;
-            authorFilter.appendChild(option);
-        });
-        
-        // 成功加载作者列表
-        
-    } catch (error) {
-        console.error('❌ 加载作者列表失败:', error);
-    }
-}
+
 
 // 加载文章（优化版）
 async function loadPosts(reset = false) {
@@ -459,29 +415,16 @@ async function loadPosts(reset = false) {
         let q;
         
         // 构建查询（添加索引优化）
-        // 根据分类和作者筛选条件构建查询
-        if (currentCategory === 'all' && currentAuthor === 'all') {
+        // 根据分类筛选条件构建查询
+        if (currentCategory === 'all') {
             // 显示所有文章
             q = postsRef
                 .orderBy('createdAt', 'desc')
                 .limit(postsPerPage);
-        } else if (currentCategory !== 'all' && currentAuthor === 'all') {
-            // 只按分类筛选
-            q = postsRef
-                .where('category', '==', currentCategory)
-                .orderBy('createdAt', 'desc')
-                .limit(postsPerPage);
-        } else if (currentCategory === 'all' && currentAuthor !== 'all') {
-            // 只按作者筛选
-            q = postsRef
-                .where('authorId', '==', currentAuthor)
-                .orderBy('createdAt', 'desc')
-                .limit(postsPerPage);
         } else {
-            // 同时按分类和作者筛选
+            // 按分类筛选
             q = postsRef
                 .where('category', '==', currentCategory)
-                .where('authorId', '==', currentAuthor)
                 .orderBy('createdAt', 'desc')
                 .limit(postsPerPage);
         }
@@ -814,13 +757,7 @@ function setupEventListeners() {
         });
     });
     
-    // 作者筛选器
-    if (authorFilter) {
-        authorFilter.addEventListener('change', () => {
-            currentAuthor = authorFilter.value;
-            loadPosts(true);
-        });
-    }
+
     
     // 加载更多按钮
     loadMoreBtn.addEventListener('click', () => {
