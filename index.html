@@ -31,6 +31,21 @@
         [data-theme="dark"] body{color:#f5f5f5;background-color:#0f0f0f}
         [data-theme="dark"] .navbar{background:rgba(26,26,26,0.85)}
         [data-theme="dark"] .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)}
+        
+        /* 修复底部空白问题的关键CSS override */
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            display: grid !important;
+            grid-template-rows: 1fr auto !important;
+            min-height: 100vh !important;
+        }
+        
+        main {
+            margin: 0 !important;
+            padding: 0 !important;
+            min-height: 0 !important;
+        }
     </style>
     
     <!-- 预连接到外部资源 -->

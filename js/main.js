@@ -2,6 +2,43 @@
 // Firebase将通过script标签在HTML中加载
 
 // ========================================
+// 修复底部空白区域问题
+// ========================================
+
+/**
+ * 修复页面底部额外的空白区域
+ * 该问题是由于CSS Grid布局在某些情况下计算高度不准确导致的
+ */
+function fixBottomWhitespace() {
+    // 等待DOM元素完全加载
+    setTimeout(() => {
+        const body = document.body;
+        const footer = document.querySelector('.footer');
+        
+        if (!footer) return;
+        
+        // 获取footer的位置信息
+        const footerRect = footer.getBoundingClientRect();
+        const scrollY = window.scrollY;
+        
+        // 计算正确的页面高度（应该是footer底部的位置）
+        const correctHeight = Math.ceil(footerRect.bottom + scrollY);
+        const currentHeight = body.scrollHeight;
+        
+        // 如果有额外的空白，就修复它
+        if (currentHeight > correctHeight) {
+            console.log(`🔧 检测到底部空白区域: ${currentHeight - correctHeight}px`);
+            
+            // 强制设置正确的高度
+            body.style.maxHeight = correctHeight + 'px';
+            document.documentElement.style.maxHeight = correctHeight + 'px';
+            
+            console.log('✅ 底部空白区域已修复');
+        }
+    }, 500); // 等待500ms确保所有样式已应用
+}
+
+// ========================================
 // 横幅视差滚动和动画效果
 // ========================================
 
@@ -250,6 +287,9 @@ const deleteModalClose = document.getElementById('delete-modal-close');
 
 // 初始化应用
 document.addEventListener('DOMContentLoaded', async () => {
+    // 修复底部空白区域问题
+    fixBottomWhitespace();
+    
     // 初始化页面加载器
     initPageLoader();
     

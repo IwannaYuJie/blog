@@ -537,6 +537,9 @@ body {
     grid-template-rows: 1fr auto;
     min-height: 100vh;
     
+    /* 防止底部额外空白 */
+    overflow-x: hidden;
+    
     /* 字体渲染优化 */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -1080,7 +1083,7 @@ main {
     
     /* 首页横幅移动端优化 */
     .hero {
-        min-height: 100vh;
+        min-height: 80vh;
         padding: 60px 0 0;
         text-align: center;
     }
@@ -1511,7 +1514,7 @@ main {
 @media (orientation: landscape) and (max-height: 600px) {
     /* 横屏时减少垂直间距 */
     .hero {
-        min-height: 100vh;
+        min-height: 80vh;
         padding: 40px 0 0;
     }
     
@@ -4630,7 +4633,7 @@ html {
     /* 横幅响应式 - 手机 */
     .hero {
         padding: 90px 0 0 !important; /* 移动端也增加padding-top */
-        min-height: 100vh;
+        min-height: 80vh;
     }
 
     .hero-container {
@@ -6767,10 +6770,11 @@ h6, .h6 {
     gap: var(--space-3);
     font-size: var(--text-sm);
     color: var(--color-text-secondary);
-    transform: translateY(100px);
+    transform: translateY(calc(100% + var(--space-6)));
     opacity: 0;
     transition: all var(--duration-300) var(--ease-out);
     z-index: 1500;
+    max-height: calc(100vh - var(--space-6) * 2);
 }
 
 .reconnect-indicator.show {
@@ -6895,11 +6899,14 @@ h6, .h6 {
     }
     
     .reconnect-indicator {
-        bottom: var(--space-4);
-        right: var(--space-4);
-        left: var(--space-4);
-        justify-content: center;
-    }
+    display: none; /* 临时隐藏以解决白色空间问题 */
+    bottom: var(--space-4);
+    right: var(--space-4);
+    left: var(--space-4);
+    justify-content: center;
+    transform: translateY(calc(100% + var(--space-4)));
+    max-height: calc(100vh - var(--space-4) * 2);
+  }
     
     .loading-toast {
         left: var(--space-4);
