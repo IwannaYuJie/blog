@@ -1,0 +1,131 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - heading " 我的博客" [level=2] [ref=e5]:
+        - generic [ref=e6]: 
+        - text: 我的博客
+      - list [ref=e7]:
+        - listitem [ref=e8]:
+          - link "首页" [ref=e9] [cursor=pointer]:
+            - /url: "#home"
+        - listitem [ref=e10]:
+          - link "文章" [ref=e11] [cursor=pointer]:
+            - /url: articles.html
+        - listitem [ref=e12]:
+          - link "关于" [ref=e13] [cursor=pointer]:
+            - /url: about.html
+        - listitem [ref=e14]:
+          - link "联系" [ref=e15] [cursor=pointer]:
+            - /url: "#contact"
+        - listitem [ref=e16]:
+          - button "当前为亮色主题，点击切换到暗色主题" [ref=e17] [cursor=pointer]:
+            - generic [ref=e18] [cursor=pointer]: 
+            - generic [ref=e19] [cursor=pointer]: 
+        - listitem [ref=e20]:
+          - link " 登录" [ref=e22] [cursor=pointer]:
+            - /url: login.html
+            - generic [ref=e23] [cursor=pointer]: 
+            - generic [ref=e24] [cursor=pointer]: 登录
+          - text:  
+  - main [ref=e25]:
+    - generic [ref=e26]:
+      - generic:
+        - generic:
+          - generic: 
+        - text:  
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - generic [ref=e29]:
+            - generic [ref=e30]: 
+            - generic [ref=e31]: 欢迎来到我的数字世界
+          - heading "创造 · 分享 · 成长" [level=1] [ref=e32]:
+            - generic [ref=e33]: 创造
+            - generic [ref=e34]: ·
+            - generic [ref=e35]: 分享
+            - generic [ref=e36]: ·
+            - generic [ref=e37]: 成长
+          - paragraph [ref=e38]: 在这里记录技术探索的足迹，分享生活中的感悟与思考，与你一起在知识的海洋中航行
+          - generic [ref=e39]:
+            - generic [ref=e40]:
+              - generic [ref=e41]: 50+
+              - generic [ref=e42]: 技术文章
+            - generic [ref=e43]:
+              - generic [ref=e44]: 1000+
+              - generic [ref=e45]: 代码提交
+            - generic [ref=e46]:
+              - generic [ref=e47]: 5+
+              - generic [ref=e48]: 开源项目
+          - generic [ref=e49]:
+            - link "探索文章 " [ref=e50] [cursor=pointer]:
+              - /url: articles.html
+              - generic [ref=e51] [cursor=pointer]: 探索文章
+              - generic [ref=e52] [cursor=pointer]: 
+            - link "了解更多 " [ref=e53] [cursor=pointer]:
+              - /url: about.html
+              - generic [ref=e54] [cursor=pointer]: 了解更多
+              - generic [ref=e55] [cursor=pointer]: 
+        - generic [ref=e57]:
+          - generic [ref=e58]:
+            - generic [ref=e64]: welcome.js
+            - generic [ref=e65]:
+              - generic [ref=e66]:
+                - generic [ref=e67]: const
+                - generic [ref=e68]: blog
+                - generic [ref=e69]: =
+                - generic [ref=e70]: "\"amazing\""
+              - generic [ref=e71]:
+                - generic [ref=e72]: function
+                - generic [ref=e73]: explore
+                - generic [ref=e74]: ()
+                - generic [ref=e75]: "{"
+              - generic [ref=e76]:
+                - generic [ref=e77]: return
+                - generic [ref=e78]: "\"knowledge\""
+              - generic [ref=e80]: "}"
+          - generic [ref=e81]:
+            - generic [ref=e83]: 
+            - generic [ref=e85]: 
+            - generic [ref=e87]: 
+            - generic [ref=e89]: 
+      - generic [ref=e93] [cursor=pointer]: 向下滚动探索更多
+  - contentinfo [ref=e94]:
+    - generic [ref=e95]:
+      - generic [ref=e96]:
+        - generic [ref=e97]:
+          - heading "我的博客" [level=3] [ref=e98]
+          - paragraph [ref=e99]: 分享知识，传递价值
+        - generic [ref=e100]:
+          - heading "快速链接" [level=3] [ref=e101]
+          - list [ref=e102]:
+            - listitem [ref=e103]:
+              - link "首页" [ref=e104] [cursor=pointer]:
+                - /url: "#home"
+            - listitem [ref=e105]:
+              - link "文章" [ref=e106] [cursor=pointer]:
+                - /url: articles.html
+            - listitem [ref=e107]:
+              - link "关于" [ref=e108] [cursor=pointer]:
+                - /url: about.html
+        - generic [ref=e109]:
+          - heading "关注我" [level=3] [ref=e110]
+          - generic [ref=e111]:
+            - link "" [ref=e112] [cursor=pointer]:
+              - /url: "#"
+              - generic [ref=e113] [cursor=pointer]: 
+            - link "" [ref=e114] [cursor=pointer]:
+              - /url: "#"
+              - generic [ref=e115] [cursor=pointer]: 
+            - link "" [ref=e116] [cursor=pointer]:
+              - /url: "#"
+              - generic [ref=e117] [cursor=pointer]: 
+      - paragraph [ref=e119]: © 2024 我的博客. 保留所有权利.
+  - button "切换主题" [ref=e120] [cursor=pointer]:
+    - generic [ref=e121] [cursor=pointer]: 
+    - generic [ref=e122] [cursor=pointer]: 
+  - generic [ref=e126]: 网络连接已断开，请检查您的网络设置
+  - generic [ref=e129]: 正在尝试重新连接...
+  - text:  
+```

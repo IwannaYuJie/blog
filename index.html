@@ -25,7 +25,7 @@
     <!-- 关键CSS内联 - 首屏渲染必需 -->
     <style>
         /* 关键CSS内联 - 从critical.css复制 */
-        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;scroll-behavior:smooth;scroll-padding-top:70px;overflow-x:hidden;font-size:16px;line-height:1.5}body{overflow-x:hidden;min-height:100vh;-webkit-tap-highlight-color:transparent;text-rendering:optimizeSpeed;word-wrap:break-word;hyphens:auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:1rem;line-height:1.5;font-weight:400;color:#111827;background-color:#ffffff;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-display:swap}:root{--primary-600:#4f46e5;--primary-700:#4338ca;--secondary-600:#c026d3;--gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-600:#4b5563;--gray-900:#111827;--color-text-primary:#111827;--color-text-secondary:#4b5563;--color-bg-primary:#ffffff;--color-bg-secondary:#f9fafb;--color-border:#e5e7eb;--space-2:0.5rem;--space-4:1rem;--space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-16:4rem;--radius-lg:0.5rem;--radius-xl:0.75rem;--radius-full:9999px;--shadow-sm:0 1px 3px 0 rgba(0,0,0,0.1),0 1px 2px 0 rgba(0,0,0,0.06);--shadow-md:0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.05);--duration-200:200ms;--duration-300:300ms;--ease-out:cubic-bezier(0,0,0.2,1)}.page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#4f46e5,#c026d3);display:flex;justify-content:center;align-items:center;z-index:9999;transition:opacity 0.5s ease-out,visibility 0.5s ease-out}.page-loader.hidden{opacity:0;visibility:hidden}.loader-content{text-align:center;color:white}.loader-spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.3);border-top:3px solid white;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1rem}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}.loader-text{font-size:1rem;font-weight:500}.navbar{position:fixed;top:0;width:100%;z-index:1000;background:rgba(255,255,255,0.85);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid rgba(255,255,255,0.2);box-shadow:0 1px 20px rgba(0,0,0,0.05);transition:all 0.3s ease-out}.nav-container{max-width:1200px;margin:0 auto;padding:0 var(--space-5);display:flex;justify-content:space-between;align-items:center;height:70px}.nav-logo h2{background:linear-gradient(135deg,var(--primary-600),var(--secondary-600));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700;font-size:1.25rem;display:flex;align-items:center;gap:var(--space-2)}.nav-menu{display:flex;list-style:none;gap:var(--space-8);align-items:center}.nav-link{text-decoration:none;color:var(--color-text-secondary);font-weight:500;padding:var(--space-2) var(--space-4);border-radius:var(--radius-lg);transition:all var(--duration-200) var(--ease-out)}.nav-link:hover{color:var(--primary-600);transform:translateY(-1px)}.nav-link.active{color:var(--primary-600);background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(217,70,239,0.15))}.hero{min-height:100vh;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:flex;align-items:center;position:relative;overflow:hidden;padding:80px 0 var(--space-16)}.hero-container{max-width:1200px;margin:0 auto;padding:0 var(--space-5);display:flex;align-items:center;gap:var(--space-16);position:relative;z-index:2}.hero-content{flex:1;max-width:50%}.hero-title{font-size:3.75rem;font-weight:800;line-height:1.1;margin-bottom:var(--space-6);color:white}.hero-subtitle{font-size:1.25rem;line-height:1.6;color:rgba(255,255,255,0.9);margin-bottom:var(--space-8)}.hero-buttons{display:flex;gap:var(--space-4);flex-wrap:wrap}.btn{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-4) var(--space-6);border-radius:var(--radius-xl);font-weight:600;text-decoration:none;transition:all var(--duration-200) var(--ease-out);cursor:pointer;border:none;font-size:1rem}.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:white;box-shadow:var(--shadow-md)}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 20px 25px -5px rgba(0,0,0,0.2)}.btn-secondary{background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);backdrop-filter:blur(10px)}.btn-secondary:hover{background:rgba(255,255,255,0.2);transform:translateY(-2px)}.container{max-width:1200px;margin:0 auto;padding:0 20px}.nav-toggle{display:none;flex-direction:column;justify-content:center;align-items:center;width:44px;height:44px;cursor:pointer;border-radius:var(--radius-lg);background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2)}.bar{width:22px;height:2px;background:var(--color-text-primary);border-radius:var(--radius-full);transition:all 0.3s ease-out}.bar:not(:last-child){margin-bottom:4px}@media (max-width:768px){.nav-menu{position:fixed;top:70px;left:0;width:100%;height:calc(100vh - 70px);background:rgba(255,255,255,0.95);backdrop-filter:blur(25px);flex-direction:column;justify-content:flex-start;align-items:center;padding:var(--space-8) var(--space-6);gap:var(--space-6);transform:translateX(-100%);opacity:0;visibility:hidden;transition:all 0.3s ease-out}.nav-menu.active{transform:translateX(0);opacity:1;visibility:visible}.nav-toggle{display:flex}.hero-container{flex-direction:column;text-align:center;gap:var(--space-8)}.hero-content{max-width:100%}.hero-title{font-size:2.25rem}.hero-subtitle{font-size:1rem}.hero-buttons{flex-direction:column;width:100%}.hero-buttons .btn{width:100%;justify-content:center}}.fonts-loading body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}.fonts-loaded body{font-family:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}@media (prefers-reduced-motion:reduce){*{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}html{scroll-behavior:auto}}
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;scroll-behavior:smooth;scroll-padding-top:70px;overflow-x:hidden;font-size:16px;line-height:1.5}body{overflow-x:hidden;min-height:100vh;display:grid;grid-template-rows:1fr auto;-webkit-tap-highlight-color:transparent;text-rendering:optimizeSpeed;word-wrap:break-word;hyphens:auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:1rem;line-height:1.5;font-weight:400;color:#111827;background-color:#ffffff;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-display:swap}:root{--primary-600:#4f46e5;--primary-700:#4338ca;--secondary-600:#c026d3;--gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-600:#4b5563;--gray-900:#111827;--color-text-primary:#111827;--color-text-secondary:#4b5563;--color-bg-primary:#ffffff;--color-bg-secondary:#f9fafb;--color-border:#e5e7eb;--space-2:0.5rem;--space-4:1rem;--space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-16:4rem;--radius-lg:0.5rem;--radius-xl:0.75rem;--radius-full:9999px;--shadow-sm:0 1px 3px 0 rgba(0,0,0,0.1),0 1px 2px 0 rgba(0,0,0,0.06);--shadow-md:0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.05);--duration-200:200ms;--duration-300:300ms;--ease-out:cubic-bezier(0,0,0.2,1)}.page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#4f46e5,#c026d3);display:flex;justify-content:center;align-items:center;z-index:9999;transition:opacity 0.5s ease-out,visibility 0.5s ease-out}.page-loader.hidden{opacity:0;visibility:hidden}.loader-content{text-align:center;color:white}.loader-spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.3);border-top:3px solid white;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1rem}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}.loader-text{font-size:1rem;font-weight:500}.navbar{position:fixed;top:0;width:100%;z-index:1000;background:rgba(255,255,255,0.85);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid rgba(255,255,255,0.2);box-shadow:0 1px 20px rgba(0,0,0,0.05);transition:all 0.3s ease-out}.nav-container{max-width:1200px;margin:0 auto;padding:0 var(--space-5);display:flex;justify-content:space-between;align-items:center;height:70px}.nav-logo h2{background:linear-gradient(135deg,var(--primary-600),var(--secondary-600));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700;font-size:1.25rem;display:flex;align-items:center;gap:var(--space-2)}.nav-menu{display:flex;list-style:none;gap:var(--space-8);align-items:center}.nav-link{text-decoration:none;color:var(--color-text-secondary);font-weight:500;padding:var(--space-2) var(--space-4);border-radius:var(--radius-lg);transition:all var(--duration-200) var(--ease-out)}.nav-link:hover{color:var(--primary-600);transform:translateY(-1px)}.nav-link.active{color:var(--primary-600);background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(217,70,239,0.15))}.hero{min-height:80vh;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:flex;align-items:center;position:relative;overflow:hidden;padding:80px 0 var(--space-16)}.hero-container{max-width:1200px;margin:0 auto;padding:0 var(--space-5);display:flex;align-items:center;gap:var(--space-16);position:relative;z-index:2}.hero-content{flex:1;max-width:50%}.hero-title{font-size:3.75rem;font-weight:800;line-height:1.1;margin-bottom:var(--space-6);color:white}.hero-subtitle{font-size:1.25rem;line-height:1.6;color:rgba(255,255,255,0.9);margin-bottom:var(--space-8)}.hero-buttons{display:flex;gap:var(--space-4);flex-wrap:wrap}.btn{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-4) var(--space-6);border-radius:var(--radius-xl);font-weight:600;text-decoration:none;transition:all var(--duration-200) var(--ease-out);cursor:pointer;border:none;font-size:1rem}.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:white;box-shadow:var(--shadow-md)}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 20px 25px -5px rgba(0,0,0,0.2)}.btn-secondary{background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.3);backdrop-filter:blur(10px)}.btn-secondary:hover{background:rgba(255,255,255,0.2);transform:translateY(-2px)}.container{max-width:1200px;margin:0 auto;padding:0 20px}.nav-toggle{display:none;flex-direction:column;justify-content:center;align-items:center;width:44px;height:44px;cursor:pointer;border-radius:var(--radius-lg);background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2)}.bar{width:22px;height:2px;background:var(--color-text-primary);border-radius:var(--radius-full);transition:all 0.3s ease-out}.bar:not(:last-child){margin-bottom:4px}@media (max-width:768px){.nav-menu{position:fixed;top:70px;left:0;width:100%;height:calc(100vh - 70px);background:rgba(255,255,255,0.95);backdrop-filter:blur(25px);flex-direction:column;justify-content:flex-start;align-items:center;padding:var(--space-8) var(--space-6);gap:var(--space-6);transform:translateX(-100%);opacity:0;visibility:hidden;transition:all 0.3s ease-out}.nav-menu.active{transform:translateX(0);opacity:1;visibility:visible}.nav-toggle{display:flex}.hero-container{flex-direction:column;text-align:center;gap:var(--space-8)}.hero-content{max-width:100%}.hero-title{font-size:2.25rem}.hero-subtitle{font-size:1rem}.hero-buttons{flex-direction:column;width:100%}.hero-buttons .btn{width:100%;justify-content:center}}.fonts-loading body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}.fonts-loaded body{font-family:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}@media (prefers-reduced-motion:reduce){*{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}html{scroll-behavior:auto}}
         /* 暗色主题基本变量 - 防止闪烁 */
         [data-theme="dark"]{--gray-50:#0f0f0f;--gray-100:#1a1a1a;--gray-200:#262626;--gray-600:#a3a3a3;--gray-900:#f5f5f5;--color-text-primary:#f5f5f5;--color-text-secondary:#d4d4d4;--color-bg-primary:#0f0f0f;--color-bg-secondary:#1a1a1a;--color-border:#404040}
         [data-theme="dark"] body{color:#f5f5f5;background-color:#0f0f0f}
@@ -138,10 +138,10 @@
                     <a href="#home" class="nav-link active">首页</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#posts" class="nav-link">文章</a>
+                    <a href="articles.html" class="nav-link">文章</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#about" class="nav-link">关于</a>
+                    <a href="about.html" class="nav-link">关于</a>
                 </li>
                 <li class="nav-item">
                     <a href="#contact" class="nav-link">联系</a>
@@ -263,11 +263,11 @@
                         </div>
                     </div>
                     <div class="hero-buttons">
-                        <a href="#posts" class="btn btn-primary hero-cta-primary">
+                        <a href="articles.html" class="btn btn-primary hero-cta-primary">
                             <span class="btn-text">探索文章</span>
                             <i class="fas fa-arrow-right btn-icon"></i>
                         </a>
-                        <a href="#about" class="btn btn-secondary hero-cta-secondary">
+                        <a href="about.html" class="btn btn-secondary hero-cta-secondary">
                             <span class="btn-text">了解更多</span>
                             <i class="fas fa-user btn-icon"></i>
                         </a>
@@ -332,221 +332,6 @@
                 <span class="scroll-text">向下滚动探索更多</span>
             </div>
         </section>
-
-        <!-- 文章列表 -->
-        <section id="posts" class="posts-section content-section">
-            <div class="container">
-                <div class="posts-header">
-                    <h2 class="section-title fade-in-up">最新文章</h2>
-                    <button class="btn btn-primary" id="add-post-btn">
-                        <i class="fas fa-plus"></i> 添加文章
-                    </button>
-                </div>
-                
-                <!-- 文章管理面板 -->
-                <div class="admin-panel" id="admin-panel" style="display: none;">
-                    <div class="admin-form">
-                        <div class="form-header">
-                            <h3 class="form-title" id="form-title">添加新文章</h3>
-                            <p class="form-description">填写文章信息，分享你的想法和见解</p>
-                        </div>
-                        
-                        <div class="form-progress">
-                            <div class="form-progress-bar" id="form-progress"></div>
-                        </div>
-                        
-                        <form id="post-form">
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <input type="text" id="post-title" name="title" class="form-input" placeholder="请输入文章标题" required data-max-length="100">
-                                    <label for="post-title" class="form-label">文章标题</label>
-                                    <i class="form-icon fas fa-check"></i>
-                                    <div class="form-message"></div>
-                                    <div class="form-counter">
-                                        <span class="current">0</span>/<span class="max">100</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-field">
-                                    <select id="post-category" name="category" class="form-select" required>
-                                        <option value="">请选择分类</option>
-                                        <option value="tech">技术</option>
-                                        <option value="life">生活</option>
-                                        <option value="thoughts">思考</option>
-                                    </select>
-                                    <label for="post-category" class="form-label">文章分类</label>
-                                    <i class="form-icon fas fa-check"></i>
-                                    <div class="form-message"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="form-field">
-                                <textarea id="post-excerpt" name="excerpt" class="form-textarea" placeholder="请输入文章摘要" rows="3" required data-max-length="200"></textarea>
-                                <label for="post-excerpt" class="form-label">文章摘要</label>
-                                <i class="form-icon fas fa-check"></i>
-                                <div class="form-message"></div>
-                                <div class="form-counter">
-                                    <span class="current">0</span>/<span class="max">200</span>
-                                </div>
-                                <div class="form-tooltip" data-tooltip="简短描述文章主要内容，吸引读者阅读">?</div>
-                            </div>
-                            
-                            <div class="form-field">
-                                <textarea id="post-content" name="content" class="form-textarea" placeholder="请输入文章内容" rows="8" required data-max-length="5000"></textarea>
-                                <label for="post-content" class="form-label">文章内容</label>
-                                <i class="form-icon fas fa-check"></i>
-                                <div class="form-message"></div>
-                                <div class="form-counter">
-                                    <span class="current">0</span>/<span class="max">5000</span>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-field">
-                                    <input type="text" id="post-tags" name="tags" class="form-input" placeholder="例如: JavaScript, React, 前端">
-                                    <label for="post-tags" class="form-label">文章标签</label>
-                                    <i class="form-icon fas fa-check"></i>
-                                    <div class="form-message"></div>
-                                    <div class="form-tooltip" data-tooltip="用逗号分隔多个标签，有助于文章分类">?</div>
-                                </div>
-                                
-                                <div class="form-field">
-                                    <input type="number" id="post-read-time" name="readTime" class="form-input" min="1" max="60" value="5" required>
-                                    <label for="post-read-time" class="form-label">阅读时间 (分钟)</label>
-                                    <i class="form-icon fas fa-check"></i>
-                                    <div class="form-message"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-primary form-submit" id="submit-btn">
-                                    <span class="btn-text">
-                                        <i class="fas fa-save"></i>
-                                        保存文章
-                                    </span>
-                                    <div class="btn-spinner"></div>
-                                    <i class="btn-success-icon fas fa-check"></i>
-                                </button>
-                                <button type="button" class="btn btn-secondary" id="cancel-btn">
-                                    <i class="fas fa-times"></i> 取消
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                
-                <div class="posts-filter fade-in-up animate-delay-200">
-                    <div class="filter-group">
-                        <label class="filter-label">分类筛选：</label>
-                        <button class="filter-btn active" data-category="all">全部</button>
-                        <button class="filter-btn" data-category="tech">技术</button>
-                        <button class="filter-btn" data-category="life">生活</button>
-                        <button class="filter-btn" data-category="thoughts">思考</button>
-                    </div>
-
-                </div>
-                <div class="posts-grid" id="posts-container">
-                    <!-- 文章将通过JavaScript动态加载 -->
-                    <div class="loading">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>正在加载文章...</p>
-                    </div>
-                </div>
-                <div class="load-more">
-                    <button class="btn btn-outline" id="load-more-btn">加载更多</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- 关于我 -->
-        <section id="about" class="about-section content-section">
-            <div class="container">
-                <div class="about-content">
-                    <div class="about-text fade-in-left">
-                        <h2 class="section-title">关于我</h2>
-                        <p>你好！我是一个热爱技术和生活的博主。在这里，我分享我的学习心得、项目经验和生活感悟。</p>
-                        <p>希望我的文章能够对你有所帮助，也欢迎与我交流讨论！</p>
-                        <div class="social-links">
-                            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
-                            <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
-                        </div>
-                    </div>
-                    <div class="about-image fade-in-right animate-delay-300">
-                        <div class="avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 联系我 -->
-        <section id="contact" class="contact-section content-section">
-            <div class="container">
-                <h2 class="section-title fade-in-up">联系我</h2>
-                <div class="contact-content">
-                    <div class="contact-info fade-in-left">
-                        <div class="contact-item">
-                            <i class="fas fa-envelope"></i>
-                            <div>
-                                <h3>邮箱</h3>
-                                <p>your.email@example.com</p>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <div>
-                                <h3>位置</h3>
-                                <p>中国</p>
-                            </div>
-                        </div>
-                    </div>
-                    <form class="contact-form fade-in-right animate-delay-300" id="contact-form">
-                        <div class="form-header">
-                            <h3 class="form-title">联系我</h3>
-                            <p class="form-description">有任何问题或建议，欢迎与我交流</p>
-                        </div>
-                        
-                        <div class="form-field">
-                            <input type="text" id="name" name="name" class="form-input" placeholder="请输入您的姓名" required>
-                            <label for="name" class="form-label">您的姓名</label>
-                            <i class="form-icon fas fa-check"></i>
-                            <div class="form-message"></div>
-                        </div>
-                        
-                        <div class="form-field">
-                            <input type="email" id="email" name="email" class="form-input" placeholder="请输入您的邮箱" required>
-                            <label for="email" class="form-label">您的邮箱</label>
-                            <i class="form-icon fas fa-check"></i>
-                            <div class="form-message"></div>
-                        </div>
-                        
-                        <div class="form-field">
-                            <textarea id="message" name="message" class="form-textarea" placeholder="请输入您的留言" rows="5" required data-max-length="500"></textarea>
-                            <label for="message" class="form-label">您的留言</label>
-                            <i class="form-icon fas fa-check"></i>
-                            <div class="form-message"></div>
-                            <div class="form-counter">
-                                <span class="current">0</span>/<span class="max">500</span>
-                            </div>
-                        </div>
-                        
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary form-submit">
-                                <span class="btn-text">
-                                    <i class="fas fa-paper-plane"></i>
-                                    发送消息
-                                </span>
-                                <div class="btn-spinner"></div>
-                                <i class="btn-success-icon fas fa-check"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </section>
     </main>
 
     <!-- 页脚 -->
@@ -561,9 +346,8 @@
                     <h3>快速链接</h3>
                     <ul>
                         <li><a href="#home">首页</a></li>
-                        <li><a href="#posts">文章</a></li>
-                        <li><a href="#about">关于</a></li>
-                        <li><a href="#contact">联系</a></li>
+                        <li><a href="articles.html">文章</a></li>
+                        <li><a href="about.html">关于</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -693,45 +477,5 @@
     
     <!-- JavaScript -->
     <script src="js/main.js"></script>
-</body>
-</html>  
-                  </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 我的博客. 保留所有权利.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- 主题切换按钮 -->
-    <button class="theme-toggle" id="theme-toggle" aria-label="切换主题" title="切换主题">
-        <i class="fas fa-moon"></i>
-    </button>
-
-    <!-- 返回顶部按钮 -->
-    <button class="back-to-top" id="back-to-top" aria-label="返回顶部" title="返回顶部">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-
-    <!-- 删除确认模态框 -->
-    <div class="modal" id="delete-modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>确认删除</h3>
-                <button class="modal-close" id="delete-modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>确定要删除这篇文章吗？此操作无法撤销。</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancel-delete-btn">取消</button>
-                <button class="btn btn-danger" id="confirm-delete-btn">确认删除</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 微交互脚本 -->
-    <script src="js/micro-interactions.js"></script>
 </body>
 </html>

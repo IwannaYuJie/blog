@@ -4,8 +4,8 @@
  * 支持亮色/暗色主题，响应式设计和流畅动画
  */
 
-/* 主题切换按钮样式 */
-.theme-toggle {
+/* 导航栏内的主题切换按钮样式 */
+.nav-item .theme-toggle {
     position: relative;
     width: 44px;
     height: 44px;
@@ -23,13 +23,13 @@
     overflow: hidden;
 }
 
-.theme-toggle:hover {
+.nav-item .theme-toggle:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
     background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(192, 38, 211, 0.2));
 }
 
-.theme-toggle:active {
+.nav-item .nav-item .theme-toggle:active {
     transform: translateY(0);
     transition-duration: 100ms;
 }

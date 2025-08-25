@@ -24,6 +24,7 @@
     "firebase": "^12.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "live-server": "^1.2.2"
   }
 }

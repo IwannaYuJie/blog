@@ -17,32 +17,36 @@ function initParallaxEffects() {
     
     function updateParallax() {
         const scrolled = window.pageYOffset;
-        const rate = scrolled * -0.5;
-        const rateShapes = scrolled * -0.3;
-        const rateFloating = scrolled * -0.2;
+        const heroHeight = hero.offsetHeight;
         
-        // 主背景视差
+        // 限制视差效果的范围，避免hero区域移动过多
+        const maxOffset = Math.min(heroHeight * 0.3, 100); // 最大偏移量限制为hero高度的30%或100px
+        const rate = Math.max(scrolled * -0.3, -maxOffset); // 减小视差强度并限制最大偏移
+        const rateShapes = scrolled * -0.2; // 减小图形移动幅度
+        const rateFloating = scrolled * -0.15; // 减小浮动元素移动幅度
+        
+        // 主背景视差 - 使用受限制的偏移量
         hero.style.transform = `translateY(${rate}px)`;
         
         // 几何图形视差
         heroShapes.forEach((shape, index) => {
-            const speed = (index + 1) * 0.1;
-            shape.style.transform = `translateY(${rateShapes * speed}px) rotate(${scrolled * 0.05}deg)`;
+            const speed = (index + 1) * 0.08; // 减小移动速度
+            shape.style.transform = `translateY(${rateShapes * speed}px) rotate(${scrolled * 0.03}deg)`;
         });
         
         // 浮动元素视差
         heroFloatingElements.forEach((element, index) => {
-            const speed = (index + 1) * 0.15;
-            element.style.transform = `translateY(${rateFloating * speed}px) rotate(${scrolled * 0.02}deg)`;
+            const speed = (index + 1) * 0.1; // 减小移动速度
+            element.style.transform = `translateY(${rateFloating * speed}px) rotate(${scrolled * 0.015}deg)`;
         });
         
-        // 内容区域视差
+        // 内容区域视差 - 减小移动幅度
         if (heroContent) {
-            heroContent.style.transform = `translateY(${scrolled * 0.1}px)`;
+            heroContent.style.transform = `translateY(${scrolled * 0.05}px)`;
         }
         
         if (heroVisual) {
-            heroVisual.style.transform = `translateY(${scrolled * 0.05}px)`;
+            heroVisual.style.transform = `translateY(${scrolled * 0.03}px)`;
         }
     }
     
@@ -251,6 +255,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // 初始化主题管理器（优先初始化，避免闪烁）
     initThemeManager();
+    
+    // 初始化导航系统（支持多页面）
+    setupNavigation();
     
     // 初始化横幅效果
     initParallaxEffects();
@@ -1391,14 +1398,19 @@ function hideDeleteModal() {
 function setupNavigation() {
     const navLinks = document.querySelectorAll('.nav-link');
     
+    // 设置当前页面的active状态
+    setActiveNavLink();
+    
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             const href = link.getAttribute('href');
             
-            // 检查是否为外部链接或页面链接（如login.html）
-            // 如果href不是以#开头的锚点链接，则允许默认行为
+            // 检查是否为外部链接或其他页面链接
             if (!href || !href.startsWith('#')) {
-                // 对于外部链接（如login.html），不阻止默认行为，直接返回
+                // 对于页面链接（如articles.html, about.html），允许默认行为进行页面跳转
+                // 关闭移动端菜单
+                if (mobileMenu) mobileMenu.classList.remove('active');
+                if (navMenu) navMenu.classList.remove('active');
                 return;
             }
             
@@ -1423,9 +1435,29 @@ function setupNavigation() {
             }
             
             // 关闭移动端菜单
-            mobileMenu.classList.remove('active');
-            navMenu.classList.remove('active');
+            if (mobileMenu) mobileMenu.classList.remove('active');
+            if (navMenu) navMenu.classList.remove('active');
         });
+    });
+}
+
+// 设置当前页面的导航链接为active状态
+function setActiveNavLink() {
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        const href = link.getAttribute('href');
+        
+        // 检查当前页面并设置对应的导航链接为active
+        if ((currentPage === 'index.html' || currentPage === '') && (href === '#home' || href === 'index.html')) {
+            link.classList.add('active');
+        } else if (currentPage === 'articles.html' && href === 'articles.html') {
+            link.classList.add('active');
+        } else if (currentPage === 'about.html' && href === 'about.html') {
+            link.classList.add('active');
+        }
     });
 }
 

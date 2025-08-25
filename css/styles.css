@@ -528,6 +528,15 @@ body {
     color: var(--color-text-primary);
     background-color: var(--color-bg-primary);
     
+    /* 确保没有额外的间距 */
+    margin: 0;
+    padding: 0;
+    
+    /* CSS Grid布局确保footer贴底 */
+    display: grid;
+    grid-template-rows: 1fr auto;
+    min-height: 100vh;
+    
     /* 字体渲染优化 */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -603,6 +612,13 @@ samp {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+}
+
+/* 确保main元素没有多余间距，在Grid布局中占据剩余空间 */
+main {
+    margin: 0;
+    padding: 0;
+    display: block;
 }
 
 /* ========================================
@@ -1065,7 +1081,7 @@ samp {
     /* 首页横幅移动端优化 */
     .hero {
         min-height: 100vh;
-        padding: 80px 0 var(--space-16);
+        padding: 60px 0 0;
         text-align: center;
     }
     
@@ -1257,7 +1273,7 @@ samp {
     
     /* 滚动指示器移动端优化 */
     .hero-scroll-indicator {
-        bottom: var(--space-6);
+        bottom: var(--space-1);
     }
     
     .scroll-text {
@@ -1496,7 +1512,7 @@ samp {
     /* 横屏时减少垂直间距 */
     .hero {
         min-height: 100vh;
-        padding: 60px 0 var(--space-8);
+        padding: 40px 0 0;
     }
     
     .hero-container {
@@ -1522,7 +1538,7 @@ samp {
     
     /* 滚动指示器横屏优化 */
     .hero-scroll-indicator {
-        bottom: var(--space-3);
+        bottom: var(--space-1);
     }
 }
 
@@ -2177,7 +2193,7 @@ html {
 
 .hero {
     position: relative;
-    min-height: 100vh;
+    height: 100vh;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -2195,7 +2211,7 @@ html {
     animation: gradientShift 15s ease infinite;
     
     color: white;
-    padding: 120px 0 80px;
+    padding: 80px 0 0;
 }
 
 /* 动态渐变动画 */
@@ -3648,7 +3664,7 @@ html {
 /* 滚动指示器 */
 .hero-scroll-indicator {
     position: absolute;
-    bottom: var(--space-8);
+    bottom: var(--space-4);
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -3657,6 +3673,7 @@ html {
     gap: var(--space-2);
     color: rgba(255, 255, 255, 0.7);
     animation: fadeInUp 1s ease-out 1.5s both;
+    z-index: 3;
 }
 
 .scroll-mouse {
@@ -4612,8 +4629,8 @@ html {
 
     /* 横幅响应式 - 手机 */
     .hero {
-        padding: 80px 0 40px;
-        min-height: 90vh;
+        padding: 60px 0 0;
+        min-height: 100vh;
     }
 
     .hero-container {
@@ -4678,7 +4695,7 @@ html {
     }
 
     .hero-scroll-indicator {
-        bottom: var(--space-4);
+        bottom: var(--space-1);
     }
 
     .scroll-text {
@@ -6237,8 +6254,9 @@ h6, .h6 {
         background: var(--gray-900);
         border-color: var(--gray-700);
     }
-}/
-* 表单浏览器兼容性优化 */
+}
+
+/* 表单浏览器兼容性优化 */
 .form-input::-webkit-input-placeholder,
 .form-textarea::-webkit-input-placeholder {
     color: transparent;
@@ -6363,8 +6381,8 @@ h6, .h6 {
         color: var(--gray-700);
     }
 }
-/
-* ========================================
+
+/* ========================================
    加载状态和错误处理UI组件
    ======================================== */
 
@@ -6952,9 +6970,9 @@ h6, .h6 {
    主题切换按钮 - 现代化设计和动画
    ======================================== */
 
-/* 主题切换按钮容器 */
-.theme-toggle {
-    position: fixed;
+/* 主题切换按钮容器 - 独立按钮使用fixed定位 */
+body > .theme-toggle {
+    position: fixed !important;
     top: 50%;
     right: 20px;
     transform: translateY(-50%);
@@ -6988,14 +7006,14 @@ h6, .h6 {
 }
 
 /* 悬停效果 */
-.theme-toggle:hover {
+body > .theme-toggle:hover {
     transform: translateY(-50%) scale(1.1);
     box-shadow: var(--shadow-xl);
     border-color: var(--primary-400);
 }
 
 /* 点击效果 */
-.theme-toggle:active {
+body > .theme-toggle:active {
     transform: translateY(-50%) scale(0.95);
     box-shadow: var(--shadow-md);
 }
@@ -7241,8 +7259,9 @@ h6, .h6 {
     .theme-toggle {
         border: 2px solid var(--color-border);
     }
-}/
-* ========================================
+}
+
+/* ========================================
    暗色主题下的特殊组件优化
    ======================================== */
 
