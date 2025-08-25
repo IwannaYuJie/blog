@@ -2195,7 +2195,7 @@ html {
     position: relative;
     height: 100vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start !important;
     overflow: hidden;
     
     /* 动态渐变背景 */
@@ -2211,7 +2211,7 @@ html {
     animation: gradientShift 15s ease infinite;
     
     color: white;
-    padding: 80px 0 0;
+    padding: 100px 0 0 !important; /* 增加padding-top以避免导航栏遮挡 */
 }
 
 /* 动态渐变动画 */
@@ -4629,7 +4629,7 @@ html {
 
     /* 横幅响应式 - 手机 */
     .hero {
-        padding: 60px 0 0;
+        padding: 90px 0 0 !important; /* 移动端也增加padding-top */
         min-height: 100vh;
     }
 
