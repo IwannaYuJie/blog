@@ -968,6 +968,12 @@ function updateUIPermissions() {
 
 // 设置管理员事件监听器
 function setupAdminEventListeners() {
+    // 重新获取删除相关的DOM元素以确保正确绑定
+    const deleteModalElement = document.getElementById('delete-modal');
+    const confirmDeleteBtnElement = document.getElementById('confirm-delete-btn');
+    const cancelDeleteBtnElement = document.getElementById('cancel-delete-btn');
+    const deleteModalCloseElement = document.getElementById('delete-modal-close');
+    
     // 添加文章按钮
     if (addPostBtn) {
         addPostBtn.addEventListener('click', () => {
@@ -987,34 +993,57 @@ function setupAdminEventListeners() {
         });
     }
     
-    // 删除确认按钮
-    if (confirmDeleteBtn) {
-        confirmDeleteBtn.addEventListener('click', () => {
-            deletePost(deletePostId);
+    // 删除确认按钮 - 使用重新获取的元素
+    if (confirmDeleteBtnElement) {
+        confirmDeleteBtnElement.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('确认删除按钮被点击，删除文章ID:', deletePostId);
+            if (deletePostId) {
+                deletePost(deletePostId);
+            } else {
+                console.warn('没有可删除的文章ID');
+            }
         });
+        console.log('✅ 确认删除按钮事件监听器已绑定');
+    } else {
+        console.warn('❌ 无法找到确认删除按钮元素');
     }
     
-    // 取消删除按钮
-    if (cancelDeleteBtn) {
-        cancelDeleteBtn.addEventListener('click', () => {
+    // 取消删除按钮 - 使用重新获取的元素
+    if (cancelDeleteBtnElement) {
+        cancelDeleteBtnElement.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('取消删除按钮被点击');
             hideDeleteModal();
         });
+        console.log('✅ 取消删除按钮事件监听器已绑定');
+    } else {
+        console.warn('❌ 无法找到取消删除按钮元素');
     }
     
-    // 删除模态框关闭按钮
-    if (deleteModalClose) {
-        deleteModalClose.addEventListener('click', () => {
+    // 删除模态框关闭按钮 - 使用重新获取的元素
+    if (deleteModalCloseElement) {
+        deleteModalCloseElement.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('X关闭按钮被点击');
             hideDeleteModal();
         });
+        console.log('✅ X关闭按钮事件监听器已绑定');
+    } else {
+        console.warn('❌ 无法找到X关闭按钮元素');
     }
     
-    // 点击模态框外部关闭
-    if (deleteModal) {
-        deleteModal.addEventListener('click', (e) => {
-            if (e.target === deleteModal) {
+    // 点击模态框外部关闭 - 使用重新获取的元素
+    if (deleteModalElement) {
+        deleteModalElement.addEventListener('click', (e) => {
+            if (e.target === deleteModalElement) {
+                console.log('点击弹窗外部，关闭弹窗');
                 hideDeleteModal();
             }
         });
+        console.log('✅ 弹窗外部点击事件监听器已绑定');
+    } else {
+        console.warn('❌ 无法找到删除弹窗元素');
     }
 }
 
