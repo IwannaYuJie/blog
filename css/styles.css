@@ -622,6 +622,17 @@ main {
     margin: 0;
     padding: 0;
     display: block;
+    /* 给main元素设置与hero相同的背景，彻底消除白色区域 */
+    background: linear-gradient(
+        135deg,
+        var(--primary-600) 0%,
+        var(--primary-700) 25%,
+        var(--secondary-600) 50%,
+        var(--primary-800) 75%,
+        var(--secondary-700) 100%
+    );
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
 }
 
 /* ========================================
@@ -2196,7 +2207,7 @@ html {
 
 .hero {
     position: relative;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     align-items: flex-start !important;
     overflow: hidden;
@@ -2214,7 +2225,30 @@ html {
     animation: gradientShift 15s ease infinite;
     
     color: white;
-    padding: 100px 0 0 !important; /* 增加padding-top以避免导航栏遮挡 */
+    padding: 100px 0 0 !important;
+    /* 使用伪元素扩展背景到footer */
+    margin-bottom: 0 !important;
+}
+
+/* 使用伪元素填充hero和footer之间的空隙 */
+.hero::after {
+    content: '';
+    position: absolute;
+    bottom: -200px;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: linear-gradient(
+        135deg,
+        var(--primary-600) 0%,
+        var(--primary-700) 25%,
+        var(--secondary-600) 50%,
+        var(--primary-800) 75%,
+        var(--secondary-700) 100%
+    );
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    z-index: -1;
 }
 
 /* 动态渐变动画 */
